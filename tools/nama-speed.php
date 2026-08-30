@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Nama Speed — הפחתת עומס בעמודי עגלה ותשלום
  * Description: מסיר נכסים של תוספים שאין להם תפקיד בעמודי העגלה והתשלום, ומצמצם עבודה מיותרת בכל טעינת עמוד. לא נוגע בטרנזילה, בווקומרס, ב-WPML, ב-YayCurrency או בווידג׳ט הנגישות.
- * Version: 1.1.0
+ * Version: 1.1.1
  * Author: Nama audit
  *
  * ────────────────────────────────────────────────────────────────────────────
@@ -165,6 +165,33 @@ function nama_speed_trim_elementor_fonts() {
 add_action( 'wp_enqueue_scripts', 'nama_speed_trim_elementor_fonts', 100 );
 
 /**
+ * מבטל את הדפסת גופני Google של Elementor בעמודי עגלה/תשלום.
+ *
+ * ⚠️  **למה זה נחוץ בנוסף ל-`wp_dequeue_style` למעלה.**
+ * נבדק על האתר החי אחרי התקנת 1.1.0: הגופנים **עדיין הופיעו** למרות ה-dequeue
+ * עם ה-handles הנכונים. הסיבה — Elementor לא מוסיף אותם ב-`wp_enqueue_scripts`
+ * בכלל. הוא מדפיס אותם מאוחר יותר, ב-`wp_head`, דרך `print_fonts_links()`.
+ * כלומר ה-dequeue רץ **לפני** שהגופנים בכלל נרשמו, ולכן לא היה לו מה להסיר.
+ *
+ * הפתרון הוא המסנן הייעודי של Elementor, שמבטל את ההדפסה מלכתחילה.
+ * ה-dequeue למעלה נשאר כרשת ביטחון לגרסאות Elementor שמתנהגות אחרת.
+ *
+ * זה מסיר את Roboto ואת Roboto Slab — **בכל המשקלים 100–900 ובכל הנטיות** —
+ * משני קבצי CSS נפרדים. הערכה עצמה משתמשת ב-Rubik, שנטען בנפרד ב-`xts-google-fonts`
+ * ואינו מושפע.
+ *
+ * @param bool $print האם להדפיס.
+ * @return bool
+ */
+function nama_speed_elementor_fonts( $print ) {
+	if ( nama_speed_on( 'trim_elementor_fonts' ) && nama_speed_is_transactional() ) {
+		return false;
+	}
+	return $print;
+}
+add_filter( 'elementor/frontend/print_google_fonts', 'nama_speed_elementor_fonts' );
+
+/**
  * מאט את ה-Heartbeat בצד הקדמי.
  *
  * ברירת המחדל היא בקשת POST ל-admin-ajax כל 15 שניות מכל לשונית פתוחה.
@@ -306,7 +333,7 @@ function nama_speed_checkout_ux() {
 	.woocommerce-checkout .ht-ctc.ht-ctc-chat { display: none !important; }
 	';
 
-	wp_register_style( 'nama-speed-checkout-ux', false, array(), '1.1.0' );
+	wp_register_style( 'nama-speed-checkout-ux', false, array(), '1.1.1' );
 	wp_enqueue_style( 'nama-speed-checkout-ux' );
 	wp_add_inline_style( 'nama-speed-checkout-ux', $css );
 }
@@ -355,7 +382,7 @@ function nama_speed_marker() {
 		}
 	}
 	printf(
-		"\n<!-- nama-speed 1.1.0 active | transactional=%s | flags=%s -->\n",
+		"\n<!-- nama-speed 1.1.1 active | transactional=%s | flags=%s -->\n",
 		nama_speed_is_transactional() ? 'yes' : 'no',
 		esc_html( implode( ',', $on ) )
 	);
