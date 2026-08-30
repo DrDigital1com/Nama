@@ -1665,6 +1665,18 @@ class Nama_Audit {
 	 * ------------------------------------------------------------------ */
 
 	public function register_admin_page() {
+		// תפריט ראשי — כדי שיהיה קל למצוא בסרגל הצד.
+		add_menu_page(
+			'Nama Audit',
+			'Nama Audit',
+			'manage_options',
+			'nama-audit',
+			array( $this, 'render_admin_page' ),
+			'dashicons-chart-area',
+			58
+		);
+
+		// ובנוסף תחת "כלים", למי שרגיל לחפש שם.
 		add_management_page(
 			'Nama Audit',
 			'Nama Audit',
