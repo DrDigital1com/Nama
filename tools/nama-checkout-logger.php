@@ -16,9 +16,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( class_exists( 'Nama_Checkout_Logger' ) ) {
+// שמירה מפני טעינה כפולה. אסור להשתמש כאן ב-class_exists: PHP רושמת
+// מחלקה שמוצהרת ברמת הקובץ כבר בזמן הקומפילציה, ולכן התנאי היה
+// מתקיים תמיד והקובץ היה יוצא לפני שהאתחול רץ.
+if ( defined( 'NAMA_CHECKOUT_LOGGER_LOADED' ) ) {
 	return;
 }
+define( 'NAMA_CHECKOUT_LOGGER_LOADED', true );
 
 class Nama_Checkout_Logger {
 

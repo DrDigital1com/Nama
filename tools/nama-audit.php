@@ -14,9 +14,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( class_exists( 'Nama_Audit' ) ) {
+// שמירה מפני טעינה כפולה. אסור להשתמש כאן ב-class_exists: PHP רושמת
+// מחלקה שמוצהרת ברמת הקובץ כבר בזמן הקומפילציה, ולכן התנאי היה
+// מתקיים תמיד והקובץ היה יוצא לפני שהאתחול רץ.
+if ( defined( 'NAMA_AUDIT_LOADED' ) ) {
 	return;
 }
+define( 'NAMA_AUDIT_LOADED', true );
 
 class Nama_Audit {
 
@@ -34,6 +38,14 @@ class Nama_Audit {
 	public static function boot() {
 		$self = new self();
 		add_action( 'admin_menu', array( $self, 'register_admin_page' ) );
+
+		// גישה ישירה ב-URL — עוקפת לחלוטין את תפריט הניהול,
+		// למקרה שתוסף אחר מסתיר פריטי תפריט או שהרישום נכשל.
+		add_action( 'admin_init', array( $self, 'maybe_render_direct' ) );
+
+		// קישור "הרצת בדיקה" בשורת התוסף במסך התוספים.
+		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $self, 'plugin_action_links' ) );
+
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			WP_CLI::add_command( 'nama audit', array( $self, 'cli_audit' ) );
 		}
@@ -1664,6 +1676,78 @@ class Nama_Audit {
 	 * ממשק ניהול
 	 * ------------------------------------------------------------------ */
 
+	/**
+	 * כתובת ההרצה הישירה.
+	 */
+	public static function direct_url( $mode = '1' ) {
+		return add_query_arg( 'nama_audit', $mode, admin_url() );
+	}
+
+	public function plugin_action_links( $links ) {
+		array_unshift(
+			$links,
+			'<a href="' . esc_url( self::direct_url() ) . '"><strong>הרצת בדיקה</strong></a>'
+		);
+		return $links;
+	}
+
+	/**
+	 * מריץ ומציג את הדוח ישירות מ-URL, בלי תלות בתפריט הניהול:
+	 *   /wp-admin/?nama_audit=1      — דוח מלא
+	 *   /wp-admin/?nama_audit=json   — JSON גולמי
+	 *   /wp-admin/?nama_audit=ping   — בדיקה שהתוסף בכלל נטען
+	 */
+	public function maybe_render_direct() {
+		if ( ! isset( $_GET['nama_audit'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return;
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( 'אין הרשאה. נדרשת הרשאת מנהל מערכת (manage_options).' );
+		}
+
+		$mode = sanitize_text_field( wp_unslash( $_GET['nama_audit'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		if ( 'ping' === $mode ) {
+			nocache_headers();
+			header( 'Content-Type: text/plain; charset=utf-8' );
+			$user = wp_get_current_user();
+			echo "Nama Audit נטען בהצלחה.\n";
+			echo 'גרסת התוסף: ' . self::VERSION . "\n";
+			echo 'PHP: ' . PHP_VERSION . "\n";
+			echo 'WordPress: ' . get_bloginfo( 'version' ) . "\n";
+			echo 'WooCommerce: ' . ( defined( 'WC_VERSION' ) ? WC_VERSION : 'לא פעיל' ) . "\n";
+			echo 'משתמש: ' . $user->user_login . ' | תפקידים: ' . implode( ',', (array) $user->roles ) . "\n";
+			echo 'manage_options: כן' . "\n";
+			echo 'נתיב הקובץ: ' . __FILE__ . "\n";
+			echo "\nלהרצת הדוח המלא: " . self::direct_url() . "\n";
+			exit;
+		}
+
+		@set_time_limit( 300 );
+		$report = $this->run();
+
+		if ( 'json' === $mode ) {
+			nocache_headers();
+			header( 'Content-Type: application/json; charset=utf-8' );
+			echo wp_json_encode( $report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+			exit;
+		}
+
+		nocache_headers();
+		header( 'Content-Type: text/html; charset=utf-8' );
+		echo '<!doctype html><html dir="rtl" lang="he"><head><meta charset="utf-8">';
+		echo '<meta name="viewport" content="width=device-width,initial-scale=1">';
+		echo '<title>Nama Audit</title>';
+		echo '<style>body{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:#f0f0f1;margin:0;padding:24px}'
+			. '.wrap{max-width:1100px;margin:0 auto}</style>';
+		echo '</head><body><div class="wrap">';
+		echo '<h1>Nama Audit — דוח בדיקת מערכת</h1>';
+		$this->render_report( $report );
+		echo '</div></body></html>';
+		exit;
+	}
+
 	public function register_admin_page() {
 		// תפריט ראשי — כדי שיהיה קל למצוא בסרגל הצד.
 		add_menu_page(
@@ -1708,6 +1792,14 @@ class Nama_Audit {
 		}
 
 		$report = $this->run();
+		$this->render_report( $report );
+		echo '</div>';
+	}
+
+	/**
+	 * מציג את גוף הדוח (סגנונות, סיכום, ממצאים, מקטעים, ייצוא JSON).
+	 */
+	private function render_report( array $report ) {
 
 		echo '<style>
 			.nama-f{border-right:5px solid #ccc;background:#fff;padding:12px 16px;margin:10px 0;box-shadow:0 1px 2px rgba(0,0,0,.08)}
@@ -1795,7 +1887,6 @@ class Nama_Audit {
 		echo '</textarea>';
 		echo '<p>להעתיק את התוכן ולשלוח לצורך ניתוח. הדוח לא כולל שמות, מיילים, כתובות או פרטי תשלום של לקוחות.</p>';
 
-		echo '</div>';
 	}
 
 	/* ---------------------------------------------------------------------
