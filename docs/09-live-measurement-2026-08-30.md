@@ -287,10 +287,12 @@ https://nama-c.com/?wc-api=WC_Gateway_Tranzila
 כשמגיעות בקשות בקצב גבוה מאותה כתובת IP. בסדרה של 10 בקשות רצופות לדף הבית,
 **3 חזרו 403**.
 
-- החוסם הוא **המקור (LiteSpeed), לא Cloudflare** — התשובה עוברת דרך Cloudflare
-  עם `cf-cache-status: DYNAMIC` ונושאת `x-turbo-charged-by: LiteSpeed`.
-- אין חתימה של Wordfence או של Cloudflare WAF. הפרופיל מתאים למגביל קצב
-  מובנה של LiteSpeed / ModSecurity.
+- החוסם הוא **המקור, לא Cloudflare** — התשובה עוברת דרך Cloudflare עם
+  `cf-cache-status: DYNAMIC` ונושאת `x-turbo-charged-by: LiteSpeed`.
+- ✅ **עודכן:** הגורם זוהה סופית כ-**cPGuard** (חומת אש של האחסון), ולא
+  כמגביל הקצב המובנה של LiteSpeed כפי ששיערתי כאן במקור. הזיהוי הגיע מניסיון
+  התחברות ל-`wp-admin`, שהופנה ל-`recaptcha.cloud` עם ההודעה
+  *"protected by cPGuard"*. ראה `docs/12-admin-access-2026-08-30.md`.
 - `robots.txt` מכיל `Crawl-delay: 30` בלבד — עקבי עם מדיניות הדוקה כלפי בוטים.
 
 ### מה זה כן, ומה זה לא

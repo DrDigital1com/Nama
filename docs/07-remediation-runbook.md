@@ -30,8 +30,19 @@
 
 ## המצב
 **א. השרת מחזיר 403 בקצב בקשות גבוה.** בסדרה של 10 בקשות רצופות מאותו IP,
-3 חזרו `403 Forbidden` — עמוד השגיאה של LiteSpeed עצמו, לא של Cloudflare ולא של
-תוסף אבטחה. הפרופיל מתאים למגביל קצב מובנה של LiteSpeed / ModSecurity.
+3 חזרו `403 Forbidden`.
+
+> ✅ **הגורם זוהה סופית: cPGuard.** בניסיון התחברות ל-`wp-admin` התקבלה הפניה
+> ל-`recaptcha.cloud` עם ההודעה *"You are here because the url you are trying to
+> access is protected by **cPGuard**"*. כלומר ה-403 אינו מגיע מ-LiteSpeed עצמו
+> אלא מ-**cPGuard — חומת אש שמותקנת אצל האחסון**.
+>
+> **זה משנה את הפעולה הנדרשת:** אין מה לחפש הגדרות ב-LiteSpeed. יש לפנות
+> לאחסון (או ללוח cPGuard ב-cPanel) ולהחריג שם את:
+> - כתובות ה-IP של **טרנזילה** — כדי שהודעת התשלום לא תיחסם
+> - הנתיבים `/?wc-api=*` ו-`/?wc-ajax=*`
+>
+> cPGuard חוסם גם את `/wp-login.php` (403 ל-curl, CAPTCHA לדפדפן).
 
 לקוחות רגילים ברובם לא נפגעים: הקבצים הסטטיים מגיעים מקצה Cloudflare
 (`cf-cache-status: HIT`, `max-age=31536000`) ולא נוגעים בשרת. **מה שכן מגיע לשרת
