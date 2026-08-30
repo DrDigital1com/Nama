@@ -1,4 +1,4 @@
-# OPcache 512MB measurement, 2026-08-30
+# OPcache 512MB measurement, 2026-08-30 — FULL 20 samples
 # Controlled: same PHP 8.5.9, same 27 active plugins. Only opcache.* changed.
 # label, http, server_ms (TTFB minus TLS)
 uncached-home	200	2134
@@ -19,3 +19,5 @@ cart-empty	200	2752
 adminajax-noop	400	2168
 uncached-home	200	2260
 404-no-woo	404	2345
+cart-empty	200	2434
+adminajax-noop	400	2503
