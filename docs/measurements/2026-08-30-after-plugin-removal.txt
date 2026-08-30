@@ -1,0 +1,13 @@
+# Re-measurement after 30 -> 27 active plugins, 2026-08-30
+# label, http, server_ms (TTFB minus TLS)
+uncached-home	200	3348
+404-no-woo	404	2835
+cart-empty	200	2860
+adminajax-noop	400	3351
+uncached-home	200	2391
+404-no-woo	404	2943
+cart-empty	200	2387
+adminajax-noop	400	2443
+uncached-home	200	2363
+404-no-woo	404	2855
+cart-empty	200	2578
