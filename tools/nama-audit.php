@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Nama Audit — WooCommerce Site Health Report
  * Description: בדיקת מערכת מקיפה לאתר וורדפרס/ווקומרס: תשתית, ביצועים, בריאות DB, קרון, ותקלות הזמנות (pending/failed). מייצר דוח מלא + ייצוא JSON ללא PII.
- * Version: 1.1.0
+ * Version: 1.2.0
  * Author: Nama Audit
  * Requires PHP: 7.4
  *
@@ -24,7 +24,7 @@ define( 'NAMA_AUDIT_LOADED', true );
 
 class Nama_Audit {
 
-	const VERSION = '1.1.0';
+	const VERSION = '1.2.0';
 
 	/** @var array<int,array> ממצאים מדורגים */
 	private $findings = array();
@@ -716,18 +716,52 @@ class Nama_Audit {
 		$rows[] = self::row( 'טיוטות צ׳קאאוט (checkout-draft)', number_format_i18n( $draft ), $draft > 500 ? 'warning' : 'notice' );
 
 		$fail_rate = $decided ? round( 100 * $incomplete / $decided, 1 ) : 0;
-		$rows[]    = self::row( 'שיעור הזמנות לא מושלמות', $fail_rate . '%', $fail_rate >= 30 ? 'critical' : ( $fail_rate >= 15 ? 'warning' : 'ok' ) );
+		$rows[]    = self::row( 'שיעור pending+failed', $fail_rate . '%', $fail_rate >= 30 ? 'critical' : ( $fail_rate >= 15 ? 'warning' : 'ok' ) );
 
-		if ( $fail_rate >= 15 ) {
+		// כשמוגדר "שמירת מלאי (דקות)", כל הזמנה שלא שולמה מתבטלת אוטומטית.
+		// במצב כזה cancelled אינו ביטול יזום אלא כשל תשלום, והוא חייב להיספר.
+		$hold_minutes  = get_option( 'woocommerce_hold_stock_minutes' );
+		$auto_cancel   = ( '' !== $hold_minutes && null !== $hold_minutes && (int) $hold_minutes > 0 );
+		$all_decided   = $good + $incomplete + $cancelled;
+		$unpaid        = $incomplete + ( $auto_cancel ? $cancelled : 0 );
+		$true_rate     = $all_decided ? round( 100 * $unpaid / $all_decided, 1 ) : 0;
+
+		if ( $auto_cancel ) {
+			$rows[] = self::row(
+				'שיעור הזמנות שלא שולמו (כולל cancelled)',
+				$true_rate . '%',
+				$true_rate >= 35 ? 'critical' : ( $true_rate >= 20 ? 'warning' : 'ok' )
+			);
+			$rows[] = self::row( 'שיעור השלמת רכישה', ( $all_decided ? round( 100 * $good / $all_decided, 1 ) : 0 ) . '%' );
+		}
+
+		if ( $auto_cancel && $true_rate >= 20 ) {
+			$this->finding(
+				$true_rate >= 35 ? 'critical' : 'warning',
+				'רק ' . ( $all_decided ? round( 100 * $good / $all_decided, 1 ) : 0 ) . '% מההזמנות מסתיימות בתשלום',
+				sprintf(
+					"%s הזמנות הושלמו, מול %s שבוטלו ו-%s שנכשלו ו-%s שממתינות.\n"
+					. "\"שמירת מלאי\" מוגדרת ל-%s דקות, ולכן כל הזמנה שנוצרה ולא שולמה מתבטלת אוטומטית. "
+					. "המשמעות: ה-cancelled כאן אינם ביטולים יזומים אלא לקוחות שלחצו \"בצע הזמנה\", "
+					. "הועברו לשער הסליקה, ולא השלימו. זהו המספר האמיתי של ההזמנות הלא מושלמות.",
+					number_format_i18n( $good ),
+					number_format_i18n( $cancelled ),
+					number_format_i18n( $failed ),
+					number_format_i18n( $pending ),
+					(int) $hold_minutes
+				),
+				'הבדיקה המכרעת היא מקטע 4ב: האם להזמנות שבוטלו יש מזהה עסקה. אם כן — הלקוחות שילמו וההזמנה בוטלה בטעות.'
+			);
+		} elseif ( $fail_rate >= 15 ) {
 			$this->finding(
 				$fail_rate >= 30 ? 'critical' : 'warning',
 				'שיעור הזמנות לא מושלמות: ' . $fail_rate . '%',
 				sprintf(
-					'%s הזמנות pending/failed מול %s הזמנות שהצליחו. בחנות תקינה עם סליקה מקומית שיעור ה-pending+failed נע סביב 8–15%%. מעל 25%% זו כמעט תמיד תקלה טכנית ולא נטישה טבעית של לקוחות.',
+					'%s הזמנות pending/failed מול %s הזמנות שהצליחו.',
 					number_format_i18n( $incomplete ),
 					number_format_i18n( $good )
 				),
-				'לעבור על docs/02-incomplete-orders.md לפי הסדר. החשוד הראשון: קריאת ה-callback משער הסליקה לא מגיעה לאתר.'
+				'לעבור על docs/02-incomplete-orders.md לפי הסדר.'
 			);
 		}
 
@@ -930,6 +964,254 @@ class Nama_Audit {
 		}
 
 		$this->section( 'orders', '4. ניתוח הזמנות (ליבת בעיית ההזמנות הלא מושלמות)', $rows, $tables );
+	}
+
+
+	/* ---------------------------------------------------------------------
+	 * 4ב. האם הלקוחות שילמו? — ניתוח הזמנות שלא הושלמו
+	 * ------------------------------------------------------------------ */
+
+	/**
+	 * מסתיר פרטים מזהים לפני שהם נכנסים לדוח שנשלח החוצה.
+	 */
+	private static function redact( $text ) {
+		$text = (string) $text;
+		$text = preg_replace( '/[\w.+-]+@[\w-]+\.[\w.]+/', '[email]', $text );
+		// רצפי ספרות ארוכים (כרטיס, ת"ז, טלפון, טוקן) — משאירים 2 ראשונות ו-2 אחרונות.
+		$text = preg_replace_callback(
+			'/\d{6,}/',
+			static function ( $m ) {
+				return substr( $m[0], 0, 2 ) . str_repeat( '*', max( 2, strlen( $m[0] ) - 4 ) ) . substr( $m[0], -2 );
+			},
+			$text
+		);
+		return $text;
+	}
+
+	private function collect_unpaid_forensics() {
+		global $wpdb;
+
+		if ( ! $this->wc_active() ) {
+			return;
+		}
+
+		$s      = $this->orders_schema();
+		$table  = $s['table'];
+		$rows   = array();
+		$tables = array();
+
+		if ( ! $this->table_exists( $table ) ) {
+			return;
+		}
+
+		$unpaid_statuses = "'wc-pending','wc-failed','wc-cancelled'";
+
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
+
+		// --- 1. הבדיקה המכרעת: מזהה עסקה על הזמנה שלא הושלמה ---
+		if ( $s['hpos'] ) {
+			$paid_unpaid = $wpdb->get_results(
+				"SELECT id, status, date_created_gmt AS created, payment_method AS gateway,
+				        total_amount AS total, transaction_id
+				 FROM {$table}
+				 WHERE {$s['type_where']}
+				   AND status IN ({$unpaid_statuses})
+				   AND transaction_id IS NOT NULL AND transaction_id <> ''
+				 ORDER BY date_created_gmt DESC
+				 LIMIT 100",
+				ARRAY_A
+			);
+		} else {
+			$paid_unpaid = $wpdb->get_results(
+				"SELECT p.ID AS id, p.post_status AS status, p.post_date_gmt AS created,
+				        MAX(CASE WHEN pm.meta_key='_payment_method' THEN pm.meta_value END) AS gateway,
+				        MAX(CASE WHEN pm.meta_key='_order_total'    THEN pm.meta_value END) AS total,
+				        MAX(CASE WHEN pm.meta_key='_transaction_id' THEN pm.meta_value END) AS transaction_id
+				 FROM {$wpdb->posts} p
+				 JOIN {$wpdb->postmeta} pm ON pm.post_id = p.ID
+				 WHERE p.post_type='shop_order' AND p.post_status IN ({$unpaid_statuses})
+				 GROUP BY p.ID, p.post_status, p.post_date_gmt
+				 HAVING transaction_id IS NOT NULL AND transaction_id <> ''
+				 ORDER BY p.post_date_gmt DESC
+				 LIMIT 100",
+				ARRAY_A
+			);
+		}
+
+		$paid_count = count( (array) $paid_unpaid );
+		$rows[]     = self::row(
+			'הזמנות לא מושלמות שיש להן מזהה עסקה',
+			number_format_i18n( $paid_count ) . ( 100 === $paid_count ? '+ (הוצג עד 100)' : '' ),
+			$paid_count ? 'critical' : 'ok'
+		);
+
+		if ( $paid_count ) {
+			$prows = array();
+			foreach ( (array) $paid_unpaid as $o ) {
+				$prows[] = array(
+					'הזמנה'    => '#' . $o['id'],
+					'סטטוס'    => $o['status'],
+					'תאריך'    => $o['created'],
+					'שער'      => $o['gateway'],
+					'סכום'     => $o['total'],
+					'מזהה עסקה' => self::redact( $o['transaction_id'] ),
+				);
+			}
+			$tables['הזמנות לא מושלמות עם מזהה עסקה'] = $prows;
+
+			$this->finding(
+				'critical',
+				$paid_count . ' הזמנות לא מושלמות שיש להן מזהה עסקה',
+				'קיים transaction_id — כלומר שער הסליקה יצר עסקה עבור ההזמנות האלה, אך הסטטוס נשאר pending/failed/cancelled. '
+				. 'אם העסקאות אושרו בפועל, הלקוחות חויבו ולא קיבלו את ההזמנה. זהו כשל בקבלת הודעת ה-callback מהשער.',
+				'לצלב כל מזהה עסקה מול דוח העסקאות בממשק של חברת הסליקה. '
+				. 'רק אחרי אימות שהכסף התקבל — להעביר את ההזמנה ל-processing. אין להריץ עדכון גורף.'
+			);
+		}
+
+		// --- 2. האם השער בכלל הגיב? מטא של השער על הזמנות שבוטלו/נכשלו ---
+		$meta_table = $s['hpos'] ? $wpdb->prefix . 'wc_orders_meta' : $wpdb->postmeta;
+		$meta_id    = $s['hpos'] ? 'order_id' : 'post_id';
+
+		if ( $this->table_exists( $meta_table ) ) {
+			$gateways = array();
+			if ( function_exists( 'WC' ) && WC()->payment_gateways() ) {
+				foreach ( WC()->payment_gateways()->payment_gateways() as $gw ) {
+					if ( 'yes' === $gw->enabled ) {
+						$gateways[] = $gw->id;
+					}
+				}
+			}
+
+			foreach ( $gateways as $gid ) {
+				$like = '%' . $wpdb->esc_like( $gid ) . '%';
+
+				$with_response = (int) $wpdb->get_var(
+					$wpdb->prepare(
+						"SELECT COUNT(DISTINCT o.{$s['id']})
+						 FROM {$table} o
+						 JOIN {$meta_table} m ON m.{$meta_id} = o.{$s['id']}
+						 WHERE {$s['type_where']}
+						   AND o.{$s['status']} = 'wc-cancelled'
+						   AND m.meta_key LIKE %s",
+						$like
+					)
+				);
+
+				$total_cancelled = (int) $wpdb->get_var(
+					"SELECT COUNT(*) FROM {$table}
+					 WHERE {$s['type_where']} AND {$s['status']} = 'wc-cancelled'"
+				);
+
+				$rows[] = self::row(
+					'הזמנות שבוטלו עם מטא של ' . $gid,
+					number_format_i18n( $with_response ) . ' מתוך ' . number_format_i18n( $total_cancelled ),
+					$with_response > 0 ? 'warning' : 'ok'
+				);
+
+				if ( $with_response > 0 && $total_cancelled > 0 ) {
+					$this->finding(
+						'warning',
+						number_format_i18n( $with_response ) . ' הזמנות שבוטלו נושאות מטא־דאטה של השער "' . $gid . '"',
+						'משמעות: השער כן החזיר תשובה עבור ההזמנות האלה לפני שהן בוטלו — הלקוח לא פשוט נטש בעמוד הסליקה. '
+						. 'יש לבדוק מה הייתה התשובה: דחייה אמיתית של הכרטיס, או תשובה חיובית שלא נקלטה.',
+						'לפתוח 3–5 מההזמנות האלה ולקרוא את המטא־דאטה של השער במסך ההזמנה, ולהצליב מול יומן השער באותה שעה.'
+					);
+				}
+			}
+
+			// מפתחות המטא הנפוצים על הזמנות שבוטלו — עוזר לזהות מה נשמר בכלל.
+			$keys = $wpdb->get_results(
+				"SELECT m.meta_key, COUNT(*) c
+				 FROM {$table} o
+				 JOIN {$meta_table} m ON m.{$meta_id} = o.{$s['id']}
+				 WHERE {$s['type_where']} AND o.{$s['status']} = 'wc-cancelled'
+				 GROUP BY m.meta_key
+				 ORDER BY c DESC
+				 LIMIT 40",
+				ARRAY_A
+			);
+			$krows = array();
+			foreach ( (array) $keys as $k ) {
+				$krows[] = array(
+					'מפתח מטא' => $k['meta_key'],
+					'הזמנות'   => (int) $k['c'],
+				);
+			}
+			$tables['מפתחות מטא על הזמנות שבוטלו'] = $krows;
+		}
+
+		// --- 3. כמה זמן עבר עד הביטול? מפריד ביטול אוטומטי מביטול ידני ---
+		if ( $s['hpos'] ) {
+			$timing = $wpdb->get_results(
+				"SELECT CASE
+				          WHEN TIMESTAMPDIFF(MINUTE, date_created_gmt, date_updated_gmt) <= 5   THEN 'עד 5 דקות'
+				          WHEN TIMESTAMPDIFF(MINUTE, date_created_gmt, date_updated_gmt) <= 70  THEN '5-70 דקות (ביטול אוטומטי)'
+				          WHEN TIMESTAMPDIFF(MINUTE, date_created_gmt, date_updated_gmt) <= 1440 THEN '70 דקות - יממה'
+				          ELSE 'מעל יממה (ביטול ידני?)'
+				        END AS bucket,
+				        COUNT(*) AS c
+				 FROM {$table}
+				 WHERE {$s['type_where']} AND status = 'wc-cancelled'
+				 GROUP BY bucket
+				 ORDER BY c DESC",
+				ARRAY_A
+			);
+			$trows = array();
+			foreach ( (array) $timing as $t ) {
+				$trows[] = array(
+					'זמן עד הביטול' => $t['bucket'],
+					'הזמנות'        => (int) $t['c'],
+				);
+			}
+			$tables['זמן שעבר מיצירת ההזמנה ועד ביטולה'] = $trows;
+		}
+		// phpcs:enable
+
+		// --- 4. יומן שער הסליקה — נפרד, כדי שלא ייחסם ע"י יומני מיילים ---
+		$log_dir = defined( 'WC_LOG_DIR' ) ? WC_LOG_DIR : '';
+		if ( $log_dir && is_dir( $log_dir ) && function_exists( 'WC' ) && WC()->payment_gateways() ) {
+			foreach ( WC()->payment_gateways()->payment_gateways() as $gw ) {
+				if ( 'yes' !== $gw->enabled ) {
+					continue;
+				}
+				$files = glob( trailingslashit( $log_dir ) . $gw->id . '-*.log' );
+				$files = is_array( $files ) ? $files : array();
+				if ( ! $files ) {
+					$rows[] = self::row( 'יומן השער ' . $gw->id, 'לא נמצא קובץ יומן', 'warning' );
+					$this->finding(
+						'warning',
+						'אין יומן לשער התשלום "' . $gw->id . '"',
+						'בלי יומן אי אפשר לדעת מה השער החזיר על כל הזמנה שנכשלה.',
+						'להפעיל Debug/Logging בהגדרות תוסף הסליקה, ולהריץ את הבדיקה שוב בעוד יממה.'
+					);
+					continue;
+				}
+				usort(
+					$files,
+					static function ( $a, $b ) {
+						return filemtime( $b ) <=> filemtime( $a );
+					}
+				);
+				$rows[] = self::row( 'יומני השער ' . $gw->id, count( $files ) . ' קבצים | אחרון: ' . gmdate( 'Y-m-d H:i', filemtime( $files[0] ) ) );
+
+				$lines = array();
+				foreach ( array_slice( $files, 0, 3 ) as $f ) {
+					foreach ( $this->tail_file( $f, 80 ) as $line ) {
+						$lines[] = array(
+							'קובץ' => basename( $f ),
+							'שורה' => mb_substr( self::redact( $line ), 0, 320 ),
+						);
+						if ( count( $lines ) >= 150 ) {
+							break 2;
+						}
+					}
+				}
+				$tables['יומן השער ' . $gw->id . ' (שורות אחרונות, מוסתר מפרטים מזהים)'] = $lines;
+			}
+		}
+
+		$this->section( 'unpaid', '4ב. האם הלקוחות שילמו? ניתוח הזמנות שלא הושלמו', $rows, $tables );
 	}
 
 	/* ---------------------------------------------------------------------
@@ -1638,6 +1920,7 @@ class Nama_Audit {
 		$this->collect_plugins();
 		$this->collect_woocommerce();
 		$this->collect_orders();
+		$this->collect_unpaid_forensics();
 		$this->collect_cron();
 		$this->collect_http_performance();
 		$this->collect_database();
