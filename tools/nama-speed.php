@@ -70,6 +70,10 @@ const NAMA_SPEED_FLAGS = array(
 	// מגביל גרסאות פוסטים ל-5. מקטין את wp_posts לאורך זמן.
 	'limit_revisions'       => true,
 
+	// מתקן שלושה ליקויים שנמדדו בדפדפן אמיתי בעמוד התשלום.
+	// ראה את ההסבר המלא אצל nama_speed_checkout_ux().
+	'checkout_ux'           => true,
+
 	// ⚠️  כבוי בכוונה. ראה את ההסבר הארוך אצל nama_speed_cart_fragments().
 	//     אל תדליק את זה לפני שקראת אותו.
 	'kill_cart_fragments'   => false,
@@ -225,6 +229,83 @@ function nama_speed_cart_fragments() {
 	wp_dequeue_script( 'wc-cart-fragments' );
 }
 add_action( 'wp_enqueue_scripts', 'nama_speed_cart_fragments', 100 );
+
+/**
+ * תיקוני חוויית משתמש בעמוד התשלום.
+ *
+ * שלושת הליקויים האלה נמדדו בדפדפן Chromium אמיתי מול האתר החי ב-30.8.2026,
+ * ותוקנו ואומתו באותו דפדפן לפני שנכתבו לכאן. הם אינם השערות.
+ *
+ * ── 1. תיבת התשלום ריקה ──────────────────────────────────────────────────
+ * `.payment_box.payment_method_tranzila` נמדדה בגובה 50px ועם `innerText`
+ * **ריק לחלוטין**. הלקוח רואה מלבן אפור ריק, ומתחתיו כפתור "Place Order".
+ * בנוסף נמדד: אין בעמוד שום מלל על אבטחה או הצפנה, אין שום הודעה שהוא עומד
+ * לעבור לאתר חיצוני, ואין תיבת אישור תנאים.
+ *
+ * לרכישה של ‎600 ₪ זו בקשה לתת מספר אשראי בלי שום סימן אמון. התיקון מוסיף
+ * הודעה מפורשת שהתשלום מתבצע בעמוד המאובטח של טרנזילה.
+ *
+ * ── 2. לוגו טרנזילה מוסתר ────────────────────────────────────────────────
+ * תוסף השער מזריק בעצמו, בתוך תיבת התשלום:
+ *     label[for="payment_method_tranzila"] > img{display: none !important;}
+ * כלומר סמל אמצעי התשלום היחיד בעמוד מוסתר בכוונה. הכלל כאן מנצח אותו
+ * בעזרת ספציפיות גבוהה יותר (`li.wc_payment_method` בתחילת הסלקטור) —
+ * `!important` לבדו לא היה מספיק, כי הסגנון של התוסף מופיע אחריו במסמך.
+ *
+ * ── 3. בנייד: הסכום לתשלום מופיע *אחרי* כפתור ההזמנה ─────────────────────
+ * נמדד ב-390x844: `#place_order` בגובה y=1787, ושורת הסכום ב-y=2258.
+ * **הלקוח מתבקש לאשר הזמנה 471 פיקסלים לפני שהוא רואה כמה הוא משלם.**
+ * זה נובע מכך שעמודת סיכום ההזמנה של Elementor נערמת מתחת לעמודת הטופס.
+ * אחרי התיקון נמדד: סכום ב-y=583, כפתור ב-y=2311.
+ *
+ * ── בונוס: כפתור הוואטסאפ ────────────────────────────────────────────────
+ * `z-index: 99999999` — הגבוה בעמוד — והוא מרחף מעל טבלת ההזמנה.
+ * מוסתר בעמוד התשלום בלבד; בשאר האתר הוא נשאר.
+ */
+function nama_speed_checkout_ux() {
+	if ( ! nama_speed_on( 'checkout_ux' ) || ! nama_speed_is_transactional() ) {
+		return;
+	}
+
+	$notice = __( 'תועברו לעמוד המאובטח של טרנזילה להשלמת התשלום. פרטי האשראי אינם נשמרים באתר.', 'nama-speed' );
+
+	$css = '
+	/* 1. להחזיר את הלוגו שתוסף השער מסתיר בסגנון פנימי משלו.
+	      דורש ספציפיות גבוהה משלו — !important לבדו לא מספיק. */
+	li.wc_payment_method label[for="payment_method_tranzila"] > img {
+		display: inline-block !important;
+		max-height: 26px !important;
+		width: auto !important;
+		vertical-align: middle;
+		margin-inline-start: 8px;
+	}
+	/* 2. תיבת התשלום נמדדה ריקה. להוסיף לה תוכן אמיתי. */
+	.woocommerce-checkout .payment_box.payment_method_tranzila::before {
+		content: "' . esc_attr( $notice ) . '" !important;
+		display: block !important;
+		padding: 12px 14px !important;
+		margin: 0 0 8px !important;
+		background: #f4f0f8 !important;
+		border-inline-start: 3px solid #a98cc4 !important;
+		border-radius: 6px !important;
+		font-size: 14px !important;
+		line-height: 1.5 !important;
+		color: #3f3f3f !important;
+	}
+	/* 3. בנייד: להעלות את סיכום ההזמנה מעל הטופס, כדי שהסכום ייראה
+	      לפני כפתור ההזמנה ולא אחריו. */
+	@media (max-width: 768px) {
+		.wd-sticky-container-lg { order: -1 !important; }
+	}
+	/* בונוס: להוריד את בועת הוואטסאפ מעל אזורי הלחיצה של הצ׳קאאוט. */
+	.woocommerce-checkout .ht-ctc.ht-ctc-chat { display: none !important; }
+	';
+
+	wp_register_style( 'nama-speed-checkout-ux', false, array(), '1.0.0' );
+	wp_enqueue_style( 'nama-speed-checkout-ux' );
+	wp_add_inline_style( 'nama-speed-checkout-ux', $css );
+}
+add_action( 'wp_enqueue_scripts', 'nama_speed_checkout_ux', 101 );
 
 /**
  * שורת אבחון בקוד המקור, כדי לדעת שהתוסף באמת פעיל.

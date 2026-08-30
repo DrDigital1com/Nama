@@ -1,0 +1,54 @@
+# Real-browser audit — nama-c.com — 2026-08-30
+# Chromium via a local MITM bridge (tools/mitm-bridge.mjs), real cart session, no order placed.
+# NOTE: timings here are inflated by the bridge and are NOT authoritative.
+#       Authoritative timings are in the other two measurement files.
+
+## Page loads
+[01-home] status=200 load=2761ms ttfb=652 fcp=1636 lcp=1636 cls=0.018 tbt=82 reqs=222 4xx/5xx=0 consoleErr=2
+[02-product] status=200 load=6898ms ttfb=3319 fcp=5320 lcp=5576 cls=0.014 tbt=15 reqs=216 4xx/5xx=0 consoleErr=1
+[03-addtocart] status=200 load=9339ms ttfb=2705 fcp=6240 lcp=7292 cls=0.014 tbt=52 reqs=251 4xx/5xx=0 consoleErr=1
+[04-cart] status=200 load=6444ms ttfb=2272 fcp=3748 lcp=4812 cls=0.016 tbt=27 reqs=216 4xx/5xx=0 consoleErr=1
+[05-checkout] status=200 load=5882ms ttfb=3248 fcp=4176 lcp=4236 cls=0.016 tbt=33 reqs=187 4xx/5xx=0 consoleErr=1
+
+WROTE report.json
+
+## Checkout UX audit (desktop + mobile)
+
+===== desktop (1440x900) =====
+languages offered : [ 'English', 'Back', 'العربية' ]
+viewport/doc      : 1440 x 900 | page height 2311
+required fields   : 14 of 21 inputs
+field ids         : billing_first_name, billing_last_name, billing_country, billing_address_1, billing_address_2, billing_city, billing_phone, billing_email, shipping_first_name, shipping_last_name, shipping_company, shipping_country, shipping_address_1, shipping_address_2, shipping_city, shipping_postcode, shipping_phone, order_comments, quantity_6a93fc547f26e
+key targets       : {"place_order":{"x":45,"y":1745,"w":841,"h":48},"total_row":{"x":976,"y":681,"w":404,"h":57},"payment_box":{"x":45,"y":1565,"w":841,"h":228},"billing_phone":{"x":45,"y":850,"w":841,"h":42}}
+floating overlays :
+    {"cls":"wd-skip-links","id":"","pos":"fixed","z":"999999","rect":{"x":-15000,"y":10,"w":186,"h":89}}
+    {"cls":"wd-sticky-container-lg elementor-element elementor-element-c7bb2d2 e-c","id":"","pos":"sticky","z":"auto","rect":{"x":946,"y":306,"w":464,"h":506}}
+    {"cls":"scrollToTop","id":"","pos":"fixed","z":"350","rect":{"x":1405,"y":830,"w":50,"h":50}}
+    {"cls":"mobile-nav wd-side-hidden wd-side-hidden-nav wd-left wd-opener-arrow","id":"","pos":"fixed","z":"500","rect":{"x":-340,"y":0,"w":340,"h":900}}
+    {"cls":"login-form-side wd-side-hidden woocommerce wd-right","id":"","pos":"fixed","z":"500","rect":{"x":1425,"y":0,"w":340,"h":900}}
+    {"cls":"wd-social-icons wd-style-colored wd-size-custom social-follow wd-shape","id":"","pos":"fixed","z":"390","rect":{"x":1385,"y":390,"w":40,"h":120}}
+    {"cls":"ht-ctc ht-ctc-chat ctc-analytics ctc_wp_desktop style-2 ht_ctc_entry_a","id":"ht-ctc-chat","pos":"fixed","z":"99999999","rect":{"x":1360,"y":700,"w":50,"h":50}}
+
+===== mobile (390x844) =====
+languages offered : [ 'English', 'Back', 'العربية' ]
+viewport/doc      : 390 x 844 | page height 3699
+required fields   : 14 of 21 inputs
+field ids         : billing_first_name, billing_last_name, billing_country, billing_address_1, billing_address_2, billing_city, billing_phone, billing_email, shipping_first_name, shipping_last_name, shipping_company, shipping_country, shipping_address_1, shipping_address_2, shipping_city, shipping_postcode, shipping_phone, order_comments, quantity_6a93fc6604dc1
+key targets       : {"place_order":{"x":35,"y":1787,"w":320,"h":48},"total_row":{"x":35,"y":2258,"w":320,"h":57},"payment_box":{"x":35,"y":1583,"w":320,"h":252},"billing_phone":{"x":35,"y":814,"w":320,"h":42}}
+floating overlays :
+    {"cls":"wd-skip-links","id":"","pos":"fixed","z":"999999","rect":{"x":-15000,"y":10,"w":186,"h":89}}
+    {"cls":"scrollToTop","id":"","pos":"fixed","z":"350","rect":{"x":378,"y":737,"w":40,"h":40}}
+    {"cls":"mobile-nav wd-side-hidden wd-side-hidden-nav wd-left wd-opener-arrow","id":"","pos":"fixed","z":"500","rect":{"x":-300,"y":0,"w":300,"h":844}}
+    {"cls":"login-form-side wd-side-hidden woocommerce wd-right","id":"","pos":"fixed","z":"500","rect":{"x":390,"y":0,"w":300,"h":844}}
+    {"cls":"ht-ctc ht-ctc-chat ctc-analytics ctc_wp_mobile style-2 ht_ctc_entry_an","id":"ht-ctc-chat","pos":"fixed","z":"99999999","rect":{"x":325,"y":644,"w":50,"h":50}}
+
+## Fix verification (mobile, before vs after CSS)
+{
+  "totalY": 583,
+  "buttonY": 2312,
+  "noticeContent": "\"תועברו לעמוד המאובטח של טרנזילה להשלמת התשלום. פרטי האשראי ",
+  "noticeH": "24px",
+  "logoDisplay": "inline-block",
+  "whatsapp": "none"
+}
+=> TOTAL NOW ABOVE THE BUTTON ✅
