@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Nama Speed — הפחתת עומס בעמודי עגלה ותשלום
  * Description: מסיר נכסים של תוספים שאין להם תפקיד בעמודי העגלה והתשלום, ומצמצם עבודה מיותרת בכל טעינת עמוד. לא נוגע בטרנזילה, בווקומרס, ב-WPML, ב-YayCurrency או בווידג׳ט הנגישות.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: Nama audit
  *
  * ────────────────────────────────────────────────────────────────────────────
@@ -113,15 +113,17 @@ function nama_speed_trim_checkout_assets() {
 		return;
 	}
 
+	// ⚠️  שמות ה-handle נלקחו מהקוד החי של העמוד (`id='<handle>-css'`), לא מניחוש.
+	//     שלושה מהם היו שגויים בגרסה 1.0.0 ותוקנו כאן.
 	$styles = array(
 		// טופס הרשמה לניוזלטר — אין טופס כזה בעמוד תשלום.
 		'mc4wp-form-basic',
-		// כפתור וואטסאפ צף — מסתיר שדות בנייד בדיוק בעמוד שאסור להסתיר בו כלום.
-		'ht-ctc-main-css',
+		// כפתור וואטסאפ צף. שים לב: קו תחתון, לא מקף.
+		'ht_ctc_main_css',
 		// CSS של בלוקים. הצ׳קאאוט כאן קלאסי (ווידג׳ט Elementor), לא בלוקים.
 		'wc-blocks-style',
-		// CSS של safe-svg לבלוקים — אין בלוקים בעמוד הזה.
-		'safe-svg-block-frontend',
+		// safe-svg — השם המלא בפועל.
+		'safe-svg-svg-icon-style',
 	);
 
 	$scripts = array(
@@ -155,10 +157,10 @@ function nama_speed_trim_elementor_fonts() {
 	if ( ! nama_speed_on( 'trim_elementor_fonts' ) || ! nama_speed_is_transactional() ) {
 		return;
 	}
-	wp_dequeue_style( 'google-fonts-1' );
-	wp_dequeue_style( 'google-fonts-2' );
-	wp_dequeue_style( 'elementor-gf-default-roboto' );
-	wp_dequeue_style( 'elementor-gf-default-robotoslab' );
+	// שמות ה-handle האמיתיים באתר הזה, מתוך הקוד החי.
+	// `xts-google-fonts` הוא של ערכת Woodmart (Rubik) — **לא** נוגעים בו.
+	wp_dequeue_style( 'elementor-gf-roboto' );
+	wp_dequeue_style( 'elementor-gf-robotoslab' );
 }
 add_action( 'wp_enqueue_scripts', 'nama_speed_trim_elementor_fonts', 100 );
 
@@ -304,32 +306,41 @@ function nama_speed_checkout_ux() {
 	.woocommerce-checkout .ht-ctc.ht-ctc-chat { display: none !important; }
 	';
 
-	wp_register_style( 'nama-speed-checkout-ux', false, array(), '1.0.0' );
+	wp_register_style( 'nama-speed-checkout-ux', false, array(), '1.1.0' );
 	wp_enqueue_style( 'nama-speed-checkout-ux' );
 	wp_add_inline_style( 'nama-speed-checkout-ux', $css );
 }
 add_action( 'wp_enqueue_scripts', 'nama_speed_checkout_ux', 101 );
 
 /**
- * מוסיף את הודעת ההפניה לתיאור של שער טרנזילה.
+ * מציג את הודעת ההפניה מעל אזור אמצעי התשלום.
  *
- * ⚠️  **למה PHP ולא CSS.** הניסיון הראשון הוסיף את ההודעה עם `::before`.
- * בדיקה בדפדפן הראתה שהכלל אמנם מחושב נכון (24px, התוכן קיים) — אבל
- * **לא נראה על המסך**, כי התבנית קובעת ל-`.payment_box` גובה קבוע של 50px.
- * לכן ההודעה נוספת כאן כאלמנט אמיתי ב-DOM, שאי אפשר "לרמוס" בגובה קבוע.
+ * ⚠️  **שתי גרסאות קודמות של הפונקציה הזו לא עבדו. שתיהן נבדקו על האתר החי.**
  *
- * @param string $description תיאור השער.
- * @param string $gateway_id  מזהה השער.
- * @return string
+ * ניסיון 1 — פסאודו-אלמנט `::before` על `.payment_box`.
+ *   הדפדפן דיווח שהכלל מחושב נכון (תוכן קיים, גובה 24px) — **אבל הוא לא נראה**,
+ *   כי התבנית קובעת ל-`.payment_box` גובה קבוע של 50px.
+ *
+ * ניסיון 2 — מסנן `woocommerce_gateway_description`.
+ *   נבדק אחרי ההתקנה: **ההודעה לא הופיעה בעמוד.** הסיבה — תוסף טרנזילה דורס את
+ *   `payment_fields()` ומדפיס HTML משלו ישירות, ולכן `get_description()` שלו
+ *   לעולם לא נקרא והמסנן לא רץ.
+ *
+ * ניסיון 3 (זה) — פעולה `woocommerce_review_order_before_payment`.
+ *   ווקומרס מפעילה אותה ב-`woocommerce_checkout_payment()` לפני רשימת אמצעי
+ *   התשלום, בלי תלות בשום שער. זה גם מיקום טוב יותר: ההודעה מתייחסת לשלב
+ *   התשלום כולו ולא לשער מסוים.
  */
-function nama_speed_payment_notice( $description, $gateway_id ) {
-	if ( ! nama_speed_on( 'checkout_ux' ) || 'tranzila' !== $gateway_id ) {
-		return $description;
+function nama_speed_payment_notice() {
+	if ( ! nama_speed_on( 'checkout_ux' ) ) {
+		return;
 	}
-	$notice = esc_html__( 'תועברו לעמוד המאובטח של טרנזילה להשלמת התשלום. פרטי האשראי אינם נשמרים באתר.', 'nama-speed' );
-	return '<span class="nama-speed-pay-notice">' . $notice . '</span>' . $description;
+	printf(
+		'<div class="nama-speed-pay-notice">%s</div>',
+		esc_html__( 'תועברו לעמוד המאובטח של טרנזילה להשלמת התשלום. פרטי האשראי אינם נשמרים באתר.', 'nama-speed' )
+	);
 }
-add_filter( 'woocommerce_gateway_description', 'nama_speed_payment_notice', 10, 2 );
+add_action( 'woocommerce_review_order_before_payment', 'nama_speed_payment_notice' );
 
 /**
  * שורת אבחון בקוד המקור, כדי לדעת שהתוסף באמת פעיל.
@@ -344,7 +355,7 @@ function nama_speed_marker() {
 		}
 	}
 	printf(
-		"\n<!-- nama-speed 1.0.0 active | transactional=%s | flags=%s -->\n",
+		"\n<!-- nama-speed 1.1.0 active | transactional=%s | flags=%s -->\n",
 		nama_speed_is_transactional() ? 'yes' : 'no',
 		esc_html( implode( ',', $on ) )
 	);
