@@ -1,5 +1,12 @@
 # תוצאת OPcache — 30 באוגוסט 2026
 
+> 🚨 **תיקון — ראה `docs/16-fragments-correction-2026-08-30.md`.**
+> במסמך הזה נכתב ש-`get_refreshed_fragments` רצה **בכל טעינת עמוד**. **זה שגוי.**
+> בדיקה בדפדפן אמיתי הראתה שווקומרס שומרת את התשובה ב-`sessionStorage` ופונה
+> לשרת רק כשה-hash של העגלה משתנה — כלומר **~פעם בסשן + פעם לכל שינוי בעגלה**.
+> הטענה נבעה מכך ש-`curl` חסר `sessionStorage` ולכן הפעיל את הקריאה בכל בקשה.
+
+
 מה ששונה ב-`/home/drdignam/public_html/php.ini` דרך MultiPHP INI Editor:
 
 ```ini
