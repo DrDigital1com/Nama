@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Nama Speed — הפחתת עומס בעמודי עגלה ותשלום
  * Description: מסיר נכסים של תוספים שאין להם תפקיד בעמודי העגלה והתשלום, ומצמצם עבודה מיותרת בכל טעינת עמוד. לא נוגע בטרנזילה, בווקומרס, ב-WPML, ב-YayCurrency או בווידג׳ט הנגישות.
- * Version: 1.1.1
+ * Version: 1.2.0
  * Author: Nama audit
  *
  * ────────────────────────────────────────────────────────────────────────────
@@ -73,6 +73,13 @@ const NAMA_SPEED_FLAGS = array(
 	// מתקן שלושה ליקויים שנמדדו בדפדפן אמיתי בעמוד התשלום.
 	// ראה את ההסבר המלא אצל nama_speed_checkout_ux().
 	'checkout_ux'           => true,
+
+	// מסיר נכסים של Gutenberg ושל jQuery Migrate **בכל האתר**.
+	// האתר בנוי ב-Elementor והצ׳קאאוט קלאסי — הנכסים האלה נטענים ואינם בשימוש.
+	'trim_site_wide'        => true,
+
+	// מוסיף preconnect לשרתי הגופנים. חוסך את זמן פתיחת החיבור.
+	'resource_hints'        => true,
 
 	// ⚠️  כבוי בכוונה. ראה את ההסבר הארוך אצל nama_speed_cart_fragments().
 	//     אל תדליק את זה לפני שקראת אותו.
@@ -333,7 +340,7 @@ function nama_speed_checkout_ux() {
 	.woocommerce-checkout .ht-ctc.ht-ctc-chat { display: none !important; }
 	';
 
-	wp_register_style( 'nama-speed-checkout-ux', false, array(), '1.1.1' );
+	wp_register_style( 'nama-speed-checkout-ux', false, array(), '1.2.0' );
 	wp_enqueue_style( 'nama-speed-checkout-ux' );
 	wp_add_inline_style( 'nama-speed-checkout-ux', $css );
 }
@@ -370,6 +377,73 @@ function nama_speed_payment_notice() {
 add_action( 'woocommerce_review_order_before_payment', 'nama_speed_payment_notice' );
 
 /**
+ * מסיר נכסים שנטענים בכל האתר ואינם בשימוש בו.
+ *
+ * כל פריט כאן אומת כנטען בפועל בקוד החי של עמוד מוצר ב-30.8.2026,
+ * ואומת כלא-נחוץ מהסיבה שרשומה לידו.
+ *
+ * ⚠️  **`jquery-migrate` הוא היחיד כאן עם סיכון ממשי.** הוא נדרש רק לקוד
+ * jQuery ישן (מלפני 3.0). ערכות ותוספים מודרניים לא צריכים אותו, אבל תוסף
+ * ישן אחד יכול להישבר. **אחרי ההפעלה — לבדוק את התפריט הנייד, הסליידרים,
+ * הוספה לעגלה ובורר הווריאציות.** אם משהו לא מגיב, לכבות את `trim_site_wide`.
+ */
+function nama_speed_trim_site_wide() {
+	if ( ! nama_speed_on( 'trim_site_wide' ) || is_admin() ) {
+		return;
+	}
+
+	// Gutenberg / בלוקים — האתר בנוי ב-Elementor, הצ׳קאאוט קלאסי.
+	foreach ( array( 'wp-block-library', 'wp-block-library-theme', 'wc-blocks-style', 'classic-theme-styles' ) as $handle ) {
+		wp_dequeue_style( $handle );
+	}
+
+	// jQuery Migrate — ראה האזהרה למעלה.
+	global $wp_scripts;
+	if ( isset( $wp_scripts->registered['jquery'] ) ) {
+		$deps = $wp_scripts->registered['jquery']->deps;
+		$wp_scripts->registered['jquery']->deps = array_diff( $deps, array( 'jquery-migrate' ) );
+	}
+}
+add_action( 'wp_enqueue_scripts', 'nama_speed_trim_site_wide', 100 );
+
+/**
+ * מסיר את סגנונות ה-`global-styles` של וורדפרס.
+ *
+ * וורדפרס מדפיסה בלוק CSS פנימי עבור theme.json גם כשהערכה אינה משתמשת בו.
+ * Woodmart היא ערכה קלאסית. נמדד: הבלוק נטען בעמוד המוצר.
+ */
+function nama_speed_remove_global_styles() {
+	if ( ! nama_speed_on( 'trim_site_wide' ) || is_admin() ) {
+		return;
+	}
+	remove_action( 'wp_enqueue_scripts', 'wp_enqueue_global_styles' );
+	remove_action( 'wp_footer', 'wp_enqueue_global_styles', 1 );
+	remove_action( 'wp_body_open', 'wp_global_styles_render_svg_filters' );
+}
+add_action( 'init', 'nama_speed_remove_global_styles' );
+
+/**
+ * רמזי חיבור מוקדם.
+ *
+ * העמוד טוען גופנים מ-`fonts.googleapis.com` ואת קובצי הגופן עצמם
+ * מ-`fonts.gstatic.com`. בלי preconnect הדפדפן פותח את החיבור רק כשהוא
+ * מגיע לשורה — כלומר DNS + TCP + TLS באמצע הרינדור.
+ *
+ * @param array  $hints
+ * @param string $relation
+ * @return array
+ */
+function nama_speed_resource_hints( $hints, $relation ) {
+	if ( ! nama_speed_on( 'resource_hints' ) || 'preconnect' !== $relation ) {
+		return $hints;
+	}
+	$hints[] = array( 'href' => 'https://fonts.gstatic.com', 'crossorigin' => 'anonymous' );
+	$hints[] = array( 'href' => 'https://fonts.googleapis.com' );
+	return $hints;
+}
+add_filter( 'wp_resource_hints', 'nama_speed_resource_hints', 10, 2 );
+
+/**
  * שורת אבחון בקוד המקור, כדי לדעת שהתוסף באמת פעיל.
  *
  * לבדיקה:  curl -s https://nama-c.com/checkout/ | grep nama-speed
@@ -382,7 +456,7 @@ function nama_speed_marker() {
 		}
 	}
 	printf(
-		"\n<!-- nama-speed 1.1.1 active | transactional=%s | flags=%s -->\n",
+		"\n<!-- nama-speed 1.2.0 active | transactional=%s | flags=%s -->\n",
 		nama_speed_is_transactional() ? 'yes' : 'no',
 		esc_html( implode( ',', $on ) )
 	);
