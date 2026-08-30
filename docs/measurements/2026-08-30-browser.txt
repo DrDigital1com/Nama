@@ -52,3 +52,13 @@ floating overlays :
   "whatsapp": "none"
 }
 => TOTAL NOW ABOVE THE BUTTON ✅
+
+## Notice fix verification (PHP DOM insert, not CSS ::before)
+{
+  "boxH": 116,
+  "noticeH": 66,
+  "noticeW": 373,
+  "noticeVisible": true,
+  "text": "תועברו לעמוד המאובטח של טרנזילה להשלמת התשלום. פרט"
+}
+=> NOTICE VISIBLE ✅

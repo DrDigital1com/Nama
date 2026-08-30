@@ -267,11 +267,10 @@ function nama_speed_checkout_ux() {
 		return;
 	}
 
-	$notice = __( 'תועברו לעמוד המאובטח של טרנזילה להשלמת התשלום. פרטי האשראי אינם נשמרים באתר.', 'nama-speed' );
-
 	$css = '
 	/* 1. להחזיר את הלוגו שתוסף השער מסתיר בסגנון פנימי משלו.
-	      דורש ספציפיות גבוהה משלו — !important לבדו לא מספיק. */
+	      דורש ספציפיות גבוהה משלו — !important לבדו לא מספיק,
+	      כי הסגנון של התוסף מופיע אחריו במסמך. נבדק בדפדפן: עובד. */
 	li.wc_payment_method label[for="payment_method_tranzila"] > img {
 		display: inline-block !important;
 		max-height: 26px !important;
@@ -279,21 +278,25 @@ function nama_speed_checkout_ux() {
 		vertical-align: middle;
 		margin-inline-start: 8px;
 	}
-	/* 2. תיבת התשלום נמדדה ריקה. להוסיף לה תוכן אמיתי. */
-	.woocommerce-checkout .payment_box.payment_method_tranzila::before {
-		content: "' . esc_attr( $notice ) . '" !important;
-		display: block !important;
-		padding: 12px 14px !important;
-		margin: 0 0 8px !important;
-		background: #f4f0f8 !important;
-		border-inline-start: 3px solid #a98cc4 !important;
-		border-radius: 6px !important;
-		font-size: 14px !important;
-		line-height: 1.5 !important;
-		color: #3f3f3f !important;
+	/* 2. תיבת התשלום נמדדה בגובה קבוע של 50px. משחררים אותה כדי
+	      שהודעת ההפניה (שנוספת ב-PHP למטה) תוכל להיראות. */
+	.woocommerce-checkout .payment_box.payment_method_tranzila {
+		height: auto !important;
+		min-height: 0 !important;
+	}
+	.nama-speed-pay-notice {
+		display: block;
+		padding: 12px 14px;
+		margin: 0 0 10px;
+		background: #f4f0f8;
+		border-inline-start: 3px solid #a98cc4;
+		border-radius: 6px;
+		font-size: 14px;
+		line-height: 1.5;
+		color: #3f3f3f;
 	}
 	/* 3. בנייד: להעלות את סיכום ההזמנה מעל הטופס, כדי שהסכום ייראה
-	      לפני כפתור ההזמנה ולא אחריו. */
+	      לפני כפתור ההזמנה ולא אחריו. נבדק בדפדפן: עובד. */
 	@media (max-width: 768px) {
 		.wd-sticky-container-lg { order: -1 !important; }
 	}
@@ -306,6 +309,27 @@ function nama_speed_checkout_ux() {
 	wp_add_inline_style( 'nama-speed-checkout-ux', $css );
 }
 add_action( 'wp_enqueue_scripts', 'nama_speed_checkout_ux', 101 );
+
+/**
+ * מוסיף את הודעת ההפניה לתיאור של שער טרנזילה.
+ *
+ * ⚠️  **למה PHP ולא CSS.** הניסיון הראשון הוסיף את ההודעה עם `::before`.
+ * בדיקה בדפדפן הראתה שהכלל אמנם מחושב נכון (24px, התוכן קיים) — אבל
+ * **לא נראה על המסך**, כי התבנית קובעת ל-`.payment_box` גובה קבוע של 50px.
+ * לכן ההודעה נוספת כאן כאלמנט אמיתי ב-DOM, שאי אפשר "לרמוס" בגובה קבוע.
+ *
+ * @param string $description תיאור השער.
+ * @param string $gateway_id  מזהה השער.
+ * @return string
+ */
+function nama_speed_payment_notice( $description, $gateway_id ) {
+	if ( ! nama_speed_on( 'checkout_ux' ) || 'tranzila' !== $gateway_id ) {
+		return $description;
+	}
+	$notice = esc_html__( 'תועברו לעמוד המאובטח של טרנזילה להשלמת התשלום. פרטי האשראי אינם נשמרים באתר.', 'nama-speed' );
+	return '<span class="nama-speed-pay-notice">' . $notice . '</span>' . $description;
+}
+add_filter( 'woocommerce_gateway_description', 'nama_speed_payment_notice', 10, 2 );
 
 /**
  * שורת אבחון בקוד המקור, כדי לדעת שהתוסף באמת פעיל.
