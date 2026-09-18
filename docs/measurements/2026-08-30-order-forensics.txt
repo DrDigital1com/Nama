@@ -1,0 +1,159 @@
+
+======================================================================
+1. הזמנות שבוטלו — מבט מלא על 12 האחרונות
+======================================================================
+
+── הזמנה #10647 · 2026-08-29T19:47:44 · 600.00 ILS ──
+   שער: tranzila / pay with credit card
+   transaction_id: ""   date_paid: null
+   נוצרה: 2026-08-29T19:47:44  ->  שונתה: 2026-08-30T00:50:50
+   meta רלוונטי: (אין שום שדה שקשור לסליקה)
+   הערות (5):
+      [2026-08-30T00:50:50] Unpaid order cancelled - time limit reached. Order status changed from Pending payment to Cancelled.
+      [2026-08-30T00:50:50] Email "Cancelled order" failed to send: { "error": { "code": 401, "message": "Request is missing required authentication credential. Expected OAuth 2 access tok
+      [2026-08-29T22:57:32] Order status changed from Cancelled to Pending payment.
+      [2026-08-29T21:35:17] Email "Cancelled order" failed to send: { "error": { "code": 401, "message": "Request is missing required authentication credential. Expected OAuth 2 access tok
+      [2026-08-29T21:35:16] Unpaid order cancelled - time limit reached. Order status changed from Pending payment to Cancelled.
+
+── הזמנה #10646 · 2026-08-29T14:07:32 · 600.00 ILS ──
+   שער: tranzila / pay with credit card
+   transaction_id: ""   date_paid: null
+   נוצרה: 2026-08-29T14:07:32  ->  שונתה: 2026-08-29T15:19:16
+   meta רלוונטי: (אין שום שדה שקשור לסליקה)
+   הערות (2):
+      [2026-08-29T15:19:17] Email "Cancelled order" failed to send: { "error": { "code": 401, "message": "Request is missing required authentication credential. Expected OAuth 2 access tok
+      [2026-08-29T15:19:16] Unpaid order cancelled - time limit reached. Order status changed from Pending payment to Cancelled.
+
+── הזמנה #10645 · 2026-08-29T10:47:31 · 600.00 ILS ──
+   שער: tranzila / pay with credit card
+   transaction_id: ""   date_paid: null
+   נוצרה: 2026-08-29T10:47:31  ->  שונתה: 2026-08-29T12:15:30
+   meta רלוונטי: (אין שום שדה שקשור לסליקה)
+   הערות (3):
+      [2026-08-29T12:19:08] منتواصل معك من شركة ناما، شفنا انك حاولتي تشتري بالموقع رزمة السفر شفاطة و سخان حليب مع كمان منتجات بحاجة لمساعدة لتكملة الطلب؟
+      [2026-08-29T12:15:31] Email "Cancelled order" failed to send: { "error": { "code": 401, "message": "Request is missing required authentication credential. Expected OAuth 2 access tok
+      [2026-08-29T12:15:30] Unpaid order cancelled - time limit reached. Order status changed from Pending payment to Cancelled.
+
+── הזמנה #10643 · 2026-08-28T14:03:51 · 990.00 ILS ──
+   שער: tranzila / pay with credit card
+   transaction_id: ""   date_paid: null
+   נוצרה: 2026-08-28T14:03:51  ->  שונתה: 2026-08-30T00:50:49
+   meta רלוונטי: (אין שום שדה שקשור לסליקה)
+   הערות (6):
+      [2026-08-30T00:50:50] Email "Cancelled order" failed to send: { "error": { "code": 401, "message": "Request is missing required authentication credential. Expected OAuth 2 access tok
+      [2026-08-30T00:50:49] Unpaid order cancelled - time limit reached. Order status changed from Pending payment to Cancelled.
+      [2026-08-29T22:55:59] Order status changed from Cancelled to Pending payment.
+      [2026-08-29T12:18:47] منتواصل معك من شركة ناما، شفنا انك حاولتي تشتري بالموقع رزمة السفر شفاطة و سخان حليب مع كمان منتجات بحاجة لمساعدة لتكملة الطلب؟
+      [2026-08-28T15:35:14] Email "Cancelled order" failed to send: { "error": { "code": 401, "message": "Request is missing required authentication credential. Expected OAuth 2 access tok
+      [2026-08-28T15:35:13] Unpaid order cancelled - time limit reached. Order status changed from Pending payment to Cancelled.
+
+── הזמנה #10642 · 2026-08-28T12:32:57 · 990.00 ILS ──
+   שער: tranzila / pay with credit card
+   transaction_id: ""   date_paid: null
+   נוצרה: 2026-08-28T12:32:57  ->  שונתה: 2026-08-28T13:34:00
+   meta רלוונטי: (אין שום שדה שקשור לסליקה)
+   הערות (2):
+      [2026-08-28T13:34:01] Email "Cancelled order" failed to send: { "error": { "code": 401, "message": "Request is missing required authentication credential. Expected OAuth 2 access tok
+      [2026-08-28T13:34:00] Unpaid order cancelled - time limit reached. Order status changed from Pending payment to Cancelled.
+
+── הזמנה #10638 · 2026-08-28T08:29:56 · 720.00 ILS ──
+   שער: tranzila / pay with credit card
+   transaction_id: ""   date_paid: null
+   נוצרה: 2026-08-28T08:29:56  ->  שונתה: 2026-08-28T09:32:12
+   meta רלוונטי: (אין שום שדה שקשור לסליקה)
+   הערות (2):
+      [2026-08-28T09:32:12] Unpaid order cancelled - time limit reached. Order status changed from Pending payment to Cancelled.
+      [2026-08-28T09:32:12] Email "Cancelled order" failed to send: { "error": { "code": 401, "message": "Request is missing required authentication credential. Expected OAuth 2 access tok
+
+── הזמנה #10634 · 2026-08-27T00:33:18 · 600.00 ILS ──
+   שער: tranzila / pay with credit card
+   transaction_id: ""   date_paid: null
+   נוצרה: 2026-08-27T00:33:18  ->  שונתה: 2026-08-27T01:53:56
+   meta רלוונטי: (אין שום שדה שקשור לסליקה)
+   הערות (2):
+      [2026-08-27T01:53:57] Email "Cancelled order" failed to send: { "error": { "code": 401, "message": "Request is missing required authentication credential. Expected OAuth 2 access tok
+      [2026-08-27T01:53:56] Unpaid order cancelled - time limit reached. Order status changed from Pending payment to Cancelled.
+
+── הזמנה #10633 · 2026-08-27T00:26:12 · 600.00 ILS ──
+   שער: tranzila / pay with credit card
+   transaction_id: ""   date_paid: null
+   נוצרה: 2026-08-27T00:26:12  ->  שונתה: 2026-08-27T01:53:56
+   meta רלוונטי: (אין שום שדה שקשור לסליקה)
+   הערות (2):
+      [2026-08-27T01:53:56] Unpaid order cancelled - time limit reached. Order status changed from Pending payment to Cancelled.
+      [2026-08-27T01:53:56] Email "Cancelled order" failed to send: { "error": { "code": 401, "message": "Request is missing required authentication credential. Expected OAuth 2 access tok
+
+── הזמנה #10629 · 2026-08-26T17:44:02 · 390.00 ILS ──
+   שער: tranzila / pay with credit card
+   transaction_id: ""   date_paid: null
+   נוצרה: 2026-08-26T17:44:02  ->  שונתה: 2026-08-26T19:44:09
+   meta רלוונטי: (אין שום שדה שקשור לסליקה)
+   הערות (2):
+      [2026-08-26T19:44:10] Email "Cancelled order" failed to send: { "error": { "code": 401, "message": "Request is missing required authentication credential. Expected OAuth 2 access tok
+      [2026-08-26T19:44:09] Unpaid order cancelled - time limit reached. Order status changed from Pending payment to Cancelled.
+
+── הזמנה #10627 · 2026-08-26T11:11:24 · 390.00 ILS ──
+   שער: tranzila / pay with credit card
+   transaction_id: ""   date_paid: null
+   נוצרה: 2026-08-26T11:11:24  ->  שונתה: 2026-08-26T12:24:52
+   meta רלוונטי: (אין שום שדה שקשור לסליקה)
+   הערות (2):
+      [2026-08-26T12:24:53] Email "Cancelled order" failed to send: { "error": { "code": 401, "message": "Request is missing required authentication credential. Expected OAuth 2 access tok
+      [2026-08-26T12:24:52] Unpaid order cancelled - time limit reached. Order status changed from Pending payment to Cancelled.
+
+── הזמנה #10626 · 2026-08-26T07:28:20 · 390.00 ILS ──
+   שער: tranzila / pay with credit card
+   transaction_id: ""   date_paid: null
+   נוצרה: 2026-08-26T07:28:20  ->  שונתה: 2026-08-26T09:21:04
+   meta רלוונטי: (אין שום שדה שקשור לסליקה)
+   הערות (2):
+      [2026-08-26T09:21:11] Email "Cancelled order" failed to send: { "error": { "code": 401, "message": "Request is missing required authentication credential. Expected OAuth 2 access tok
+      [2026-08-26T09:21:07] Unpaid order cancelled - time limit reached. Order status changed from Pending payment to Cancelled.
+
+── הזמנה #10622 · 2026-08-25T11:18:27 · 990.00 ILS ──
+   שער: tranzila / pay with credit card
+   transaction_id: ""   date_paid: null
+   נוצרה: 2026-08-25T11:18:27  ->  שונתה: 2026-08-25T12:32:00
+   meta רלוונטי: (אין שום שדה שקשור לסליקה)
+   הערות (2):
+      [2026-08-25T12:32:01] Unpaid order cancelled - time limit reached. Order status changed from Pending payment to Cancelled.
+      [2026-08-25T12:32:01] Email "Cancelled order" failed to send: { "error": { "code": 401, "message": "Request is missing required authentication credential. Expected OAuth 2 access tok
+
+======================================================================
+2. כמה זמן עבר מיצירה עד ביטול
+======================================================================
+  חציון: 87.7 דקות · מינימום 61.0 · מקסימום 2087.0
+  (אם כולן סביב 60 דקות — זו משימת "שמירת מלאי" האוטומטית, כצפוי)
+
+======================================================================
+3. לשם השוואה — הזמנה שהושלמה
+======================================================================
+
+── #10631 · 2026-08-26T22:57:38 · 600.00 ──
+   transaction_id: "461568"  date_paid: "2026-08-26T23:03:38"
+      tranzila_terminal_type = "main"
+      [2026-08-27T14:31:06] Email "Completed order" failed to send: { "error": { "code": 401, "message": "Request is missing required authentication credential. Expected OAuth 2 access tok
+      [2026-08-27T14:31:06] Order status changed from Processing to Completed.
+      [2026-08-26T23:03:42] Tranzila payment completed
+      [2026-08-26T23:03:41] Handle Tranzila IPN Request status: 000
+      [2026-08-26T23:03:39] Email "New order" failed to send: { "error": { "code": 401, "message": "Request is missing required authentication credential. Expected OAuth 2 access token, lo
+      [2026-08-26T23:03:39] Email "Processing order" failed to send: { "error": { "code": 401, "message": "Request is missing required authentication credential. Expected OAuth 2 access to
+      [2026-08-26T23:03:38] Handle Tranzila IPN Request status: 000
+      [2026-08-26T23:03:38] Tranzila payment completed
+      [2026-08-26T23:03:38] Payment via pay with credit card (461568).
+
+── #10628 · 2026-08-26T11:13:22 · 540.00 ──
+   transaction_id: "460968"  date_paid: "2026-08-26T11:13:55"
+      tranzila_terminal_type = "main"
+      [2026-08-27T14:29:48] Order status changed from Processing to Completed.
+      [2026-08-27T14:29:47] Email "Completed order" failed to send: { "error": { "code": 401, "message": "Request is missing required authentication credential. Expected OAuth 2 access tok
+      [2026-08-26T11:13:58] Handle Tranzila IPN Request status: 000
+      [2026-08-26T11:13:58] Tranzila payment completed
+      [2026-08-26T11:13:56] Email "New order" failed to send: { "error": { "code": 401, "message": "Request is missing required authentication credential. Expected OAuth 2 access token, lo
+      [2026-08-26T11:13:56] Email "Processing order" failed to send: { "error": { "code": 401, "message": "Request is missing required authentication credential. Expected OAuth 2 access to
+      [2026-08-26T11:13:55] Tranzila payment completed
+      [2026-08-26T11:13:55] Payment via pay with credit card (460968).
+      [2026-08-26T11:13:54] Handle Tranzila IPN Request status: 000
+
+סיום. לא שונה דבר.
+

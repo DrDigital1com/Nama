@@ -1,0 +1,80 @@
+
+======================================================================
+1. אימות
+======================================================================
+  ✓ מחובר כ-audit (id 25), תפקידים: 
+
+======================================================================
+2. ⭐ האם להזמנות שבוטלו יש מזהה עסקה — השאלה המכריעה
+======================================================================
+  נבדקו 150 הזמנות שבוטלו
+  ✗ עם מזהה עסקה  : 0   ← אלה לקוחות ש**שילמו**
+  ✓ בלי מזהה עסקה : 150   ← נטישה לפני תשלום
+
+  🟢 אף הזמנה שבוטלה אינה נושאת מזהה עסקה — כלומר נטישה, לא תשלום שאבד.
+
+======================================================================
+3. אותה בדיקה על הזמנות שנכשלו
+======================================================================
+  50 נבדקו · 0 עם מזהה עסקה
+
+======================================================================
+4. תוספים
+======================================================================
+  33 מותקנים · 30 פעילים
+
+   [פעיל]  AffiliateWP  2.36.0   (affiliate-wp/affiliate-wp)
+   [פעיל]  Classic Editor  1.7.0   (classic-editor/classic-editor)
+   [פעיל]  Click to Chat  4.43   (click-to-chat-for-whatsapp/click-to-chat)
+   [פעיל]  Dr. Access  1.2.3   (dr-access/dr-access)
+   [פעיל]  Duplicate Page  4.5.9   (duplicate-page/duplicatepage)
+   [פעיל]  Elementor  4.2.3   (elementor/elementor)
+   [פעיל]  Elementor Pro  4.2.1   (elementor-pro/elementor-pro)
+   [פעיל]  MC4WP: Mailchimp for WordPress  4.14.0   (mailchimp-for-wp/mailchimp-for-wp)
+   [פעיל]  Members  3.2.26   (members/members)
+   [פעיל]  Meta for WooCommerce  3.7.6   (facebook-for-woocommerce/facebook-for-woocommerce)
+   [פעיל]  Migrate Guru  6.72   (migrate-guru/migrateguru)
+   [פעיל]  Nama Audit — WooCommerce Site Health Report  1.1.0   (nama-audit/nama-audit)
+   [פעיל]  Order Export &amp; Order Import for WooCommerce  2.7.7   (order-import-export-for-woocommerce/order-import-export-for-woocommerce)
+   [פעיל]  Safe SVG  2.4.0   (safe-svg/safe-svg)
+   [פעיל]  Site Kit by Google  1.186.0   (google-site-kit/google-site-kit)
+   [פעיל]  SliceWP  1.2.11   (slicewp/index)
+   [פעיל]  SliceWP Add-On - Cross Site Tracking  1.0.0   (slicewp-add-on-cross-site-tracking/index)
+   [פעיל]  SliceWP Pro  1.0.20   (slicewp-pro/index)
+   [פעיל]  Tranzila Gateway  0.0.24.6   (WCGatewayTranzila/WCGatewayTranzila)
+   [פעיל]  WooCommerce  11.0.1   (woocommerce/woocommerce)
+   [פעיל]  Woodmart Core  1.1.6   (woodmart-core/woodmart-core)
+   [פעיל]  WPCode Lite  2.3.9   (insert-headers-and-footers/ihaf)
+   [פעיל]  WP Mail Logging  1.16.0   (wp-mail-logging/wp-mail-logging)
+   [פעיל]  WP Mail SMTP  4.9.0   (wp-mail-smtp/wp_mail_smtp)
+   [פעיל]  WPML Multilingual &amp; Multicurrency for WooCommerce  5.5.7   (woocommerce-multilingual/wpml-woocommerce)
+   [פעיל]  WPML Multilingual CMS  4.9.5   (sitepress-multilingual-cms/sitepress)
+   [פעיל]  WPML String Translation  3.5.3   (wpml-string-translation/plugin)
+   [פעיל]  WP Rocket  3.10.9   (wp-rocket/wp-rocket)
+   [פעיל]  YayCurrency  3.3.5   (yaycurrency/yay-currency)
+   [פעיל]  Yoast SEO  28.3   (wordpress-seo/wp-seo)
+
+   [כבוי]  All-in-One WP Migration and Backup  (all-in-one-wp-migration/all-in-one-wp-migration)
+   [כבוי]  LTR  RTL Admin content  (ltrrtl-admin-content/ltr-admin)
+   [כבוי]  YayMail - WooCommerce Email Customizer  (yaymail/yaymail)
+
+======================================================================
+5. הגדרות — עמוד החנות
+======================================================================
+  title: NAMA | posts_per_page: 10
+
+======================================================================
+6. דוח מצב ווקומרס
+======================================================================
+  WP 7.1 · WC 11.0.1 · PHP 8.4.24 · LiteSpeed
+  memory: 1073741824 · max_execution: undefineds
+  theme: Woodmart Child 1.0.0 (child)
+  db prefix: wpgh_ · size: {"data":184.6300000000001,"index":63.570000000000135}
+  page Shop base: id=10 set=true exists=false visible=false
+  page Cart: id=9531 set=true exists=true visible=true
+  page Checkout: id=9532 set=true exists=true visible=true
+  page My account: id=13 set=true exists=true visible=true
+  page Terms and conditions: id= set=false exists=false visible=false
+
+סיום. הסקריפט לא שינה דבר.
+

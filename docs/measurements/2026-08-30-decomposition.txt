@@ -1,0 +1,61 @@
+# Deep-dive raw data — nama-c.com — 2026-08-30
+# Cost decomposition: where the checkout's 3.6s actually goes.
+# Method: external, via Cloudflare, Chrome UA, 5s pacing. server_ms = TTFB - TLS handshake.
+
+## Single pass across cache states
+=== A. page-cache HIT (WP Rocket serves static HTML) ===
+home (cached)                                  http=200 server=6796ms bytes=46868
+blog (cached)                                  http=200 server=324ms bytes=35644
+=== B. cache BYPASS — full WP + all plugins boot, no cart ===
+home ?nocache (uncached)                       http=200 server=2146ms bytes=46838
+blog ?nocache (uncached)                       http=200 server=2299ms bytes=35928
+404 page (never cached)                        http=404 server=2522ms bytes=35149
+=== C. WooCommerce transactional (never cached, cart session) ===
+cart (empty)                                   http=200 server=2737ms bytes=58508
+my-account                                     http=200 server=2291ms bytes=38542
+=== D. AJAX (never cached, minimal output) ===
+wc-ajax fragments                              http=200 server=648ms bytes=650
+admin-ajax noop                                http=400 server=2938ms bytes=1
+=== E. REST ===
+wp-json root                                   http=200 server=2606ms bytes=88917
+wc store cart                                  http=200 server=2247ms bytes=391
+DECOMPOSE_DONE
+
+## 4 samples per state (label, http, server_ms, bytes)
+cached-home	200	476	46849
+cached-blog	200	291	35644
+uncached-home	200	2391	46955
+uncached-blog	200	2477	35878
+404-no-woo-cart	404	3026	35137
+cart-empty	200	2569	58549
+adminajax-noop	400	2147	1
+cached-home	200	598	46922
+cached-blog	200	293	35644
+uncached-home	200	2510	47132
+uncached-blog	200	2625	35795
+404-no-woo-cart	404	2749	35142
+cart-empty	200	2604	58516
+adminajax-noop	400	2498	1
+cached-home	200	310	46849
+cached-blog	200	441	35644
+uncached-home	200	2256	46850
+uncached-blog	200	2310	35915
+404-no-woo-cart	404	2570	35140
+cart-empty	200	2281	58518
+adminajax-noop	400	2831	1
+cached-home	200	365	46944
+cached-blog	200	486	35644
+uncached-home	200	2638	47111
+uncached-blog	200	2336	35914
+404-no-woo-cart	404	2658	35139
+cart-empty	200	2154	58493
+adminajax-noop	400	2242	1
+
+## Summary
+cached-blog        n=4 mean=  378ms min=  291 max=  486
+cached-home        n=4 mean=  437ms min=  310 max=  598
+cart-empty         n=4 mean= 2402ms min= 2154 max= 2604
+adminajax-noop     n=4 mean= 2430ms min= 2147 max= 2831
+uncached-blog      n=4 mean= 2437ms min= 2310 max= 2625
+uncached-home      n=4 mean= 2449ms min= 2256 max= 2638
+404-no-woo-cart    n=4 mean= 2751ms min= 2570 max= 3026

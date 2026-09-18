@@ -1,0 +1,24 @@
+=== EMPTY CART — browsing as a first-time visitor ===
+  home                   wc-ajax calls: get_refreshed_fragments(-1788093301087ms)
+  blog                   wc-ajax calls: NONE
+  contact-us             wc-ajax calls: NONE
+  product                wc-ajax calls: NONE
+
+=== WITH A CART — the case that matters ===
+  add-to-cart            wc-ajax calls: get_refreshed_fragments(-1788093344945ms)
+  home again             wc-ajax calls: get_refreshed_fragments(-1788093359063ms)
+  blog again             wc-ajax calls: NONE
+  contact again          wc-ajax calls: NONE
+
+=== does sessionStorage hold the fragments? ===
+  {
+  "keys": {
+    "wc_cart_hash_d6ab1fff7434356a15b9d4181b4a9672-en": "d658e72cf26330b0123639d5266567fc",
+    "wc_fragments_d6ab1fff7434356a15b9d4181b4a9672": "{\"div.widget_shopping_cart_content\":\"<div class=\\\"widget_sho"
+  },
+  "cookieHash": "d658e72cf26330b0123639d5266567fc",
+  "itemsCookie": "1"
+}
+
+=== header cart counter as rendered ===
+  {"selector":".wd-cart-number","text":"1 item"}
