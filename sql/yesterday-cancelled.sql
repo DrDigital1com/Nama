@@ -119,3 +119,46 @@ WHERE type = 'shop_order'
   AND date_created_gmt >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY)
 GROUP BY שעה_il
 ORDER BY שעה_il;
+
+
+-- ---------------------------------------------------------------------
+-- 6. אילו שערי תשלום פעילים בפועל  ⭐ אימות מהנתונים
+-- ---------------------------------------------------------------------
+-- לא מסתמך על מה שנראה במסך ההגדרות. קורא ישירות את ההגדרות
+-- השמורות של כל שער. אמור להראות שער פעיל אחד בלבד.
+
+SELECT
+    REPLACE(REPLACE(option_name,'woocommerce_',''),'_settings','')  AS שער,
+    CASE WHEN option_value LIKE '%s:7:"enabled";s:3:"yes"%'
+         THEN '🟢 פעיל' ELSE 'כבוי' END                             AS מצב,
+    CASE WHEN option_value LIKE '%s:8:"testmode";s:3:"yes"%'
+           OR option_value LIKE '%s:7:"sandbox";s:3:"yes"%'
+         THEN '⚠️ מצב בדיקה!' ELSE '' END                           AS התראה
+FROM wpgh_options
+WHERE option_name LIKE 'woocommerce\_%\_settings'
+  AND option_value LIKE '%"enabled"%'
+ORDER BY מצב, שער;
+
+-- אם מופיע יותר משער פעיל אחד — לקוחות עלולים לבחור את הישן.
+-- אם מופיע "מצב בדיקה" על השער הפעיל — אף עסקה לא תיסלק באמת.
+
+
+-- ---------------------------------------------------------------------
+-- 7. שיעור ההצלחה לפי שער — לפני ואחרי ההחלפה
+-- ---------------------------------------------------------------------
+-- מראה אם השער החדש מתפקד גרוע יותר מהישן, ומאיזה תאריך.
+
+SELECT
+    COALESCE(NULLIF(payment_method,''),'(ריק)')                      AS שער,
+    MIN(DATE(DATE_ADD(date_created_gmt, INTERVAL 3 HOUR)))           AS הזמנה_ראשונה,
+    MAX(DATE(DATE_ADD(date_created_gmt, INTERVAL 3 HOUR)))           AS הזמנה_אחרונה,
+    COUNT(*)                                                          AS סהכ,
+    SUM(status IN ('wc-processing','wc-completed'))                   AS הצליחו,
+    SUM(status IN ('wc-cancelled','wc-failed','wc-pending'))          AS נפלו,
+    ROUND(100 * SUM(status IN ('wc-processing','wc-completed')) / NULLIF(COUNT(*),0), 1)
+                                                                      AS אחוז_הצלחה
+FROM wpgh_wc_orders
+WHERE type = 'shop_order'
+  AND date_created_gmt >= DATE_SUB(UTC_DATE(), INTERVAL 60 DAY)
+GROUP BY שער
+ORDER BY הזמנה_אחרונה DESC;
