@@ -162,3 +162,55 @@ WHERE type = 'shop_order'
   AND date_created_gmt >= DATE_SUB(UTC_DATE(), INTERVAL 60 DAY)
 GROUP BY שער
 ORDER BY הזמנה_אחרונה DESC;
+
+
+-- ---------------------------------------------------------------------
+-- 8. איפה מוסתר הטקסט שמזכיר את טרנזילה  ⭐
+-- ---------------------------------------------------------------------
+-- עמוד התשלום עדיין מציג "תועברו לעמוד המאובטח של טרנזילה".
+-- השאילתות כאן מאתרות את המחרוזת בכל מקום שבו היא יכולה להיות שמורה.
+-- באתר מותקן WPML, ולכן ייתכן שהטקסט יושב בתרגום ולא בהגדרה —
+-- ואז שינוי ההגדרה לבדו לא ישנה את מה שהלקוח רואה.
+
+-- 8א. בהגדרות (כולל תיאור של שער תשלום)
+SELECT option_name                AS אפשרות,
+       LEFT(option_value, 400)    AS תוכן
+FROM wpgh_options
+WHERE option_value LIKE '%טרנזילה%'
+   OR option_value LIKE '%tranzila%';
+
+-- 8ב. במחרוזות המקור של WPML
+SELECT id, context AS הקשר, name AS שם, LEFT(value, 400) AS ערך
+FROM wpgh_icl_strings
+WHERE value LIKE '%טרנזילה%'
+   OR value LIKE '%tranzila%';
+
+-- 8ג. בתרגומים של WPML — לכל שפה בנפרד
+SELECT s.context      AS הקשר,
+       s.name         AS שם,
+       t.language     AS שפה,
+       t.status       AS סטטוס,
+       LEFT(t.value, 400) AS תרגום
+FROM wpgh_icl_string_translations t
+JOIN wpgh_icl_strings s ON s.id = t.string_id
+WHERE t.value LIKE '%טרנזילה%'
+   OR t.value LIKE '%tranzila%';
+
+-- 8ד. בתוכן של עמודים (אם הוטמע בבונה העמודים)
+SELECT ID, post_type AS סוג, post_title AS כותרת, post_status AS סטטוס
+FROM wpgh_posts
+WHERE post_content LIKE '%טרנזילה%'
+   OR post_content LIKE '%tranzila%';
+
+-- 8ה. במטא של עמודים — כאן יושב המידע של Elementor
+SELECT post_id AS עמוד, meta_key AS מפתח
+FROM wpgh_postmeta
+WHERE meta_value LIKE '%טרנזילה%'
+   OR meta_value LIKE '%tranzila%'
+LIMIT 50;
+
+-- 8ו. בקטעי קוד של WPCode
+SELECT ID, post_title AS שם_הקטע, post_status AS סטטוס
+FROM wpgh_posts
+WHERE post_type LIKE '%wpcode%'
+  AND (post_content LIKE '%טרנזילה%' OR post_content LIKE '%tranzila%');
