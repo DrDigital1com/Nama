@@ -1,0 +1,437 @@
+=== RENDERED TEXT ===
+Skip to main content
+Compare
+Monitoring
+Book a call
+E
+ע
+ع
+Share report
+64
+Grade D
+
+Website audit for
+
+nama-c.com
+
+12 pages scanned · August 30, 2026
+
+Performance
+
+How fast the site loads and responds
+
+57
+SEO
+
+How easily search engines can crawl and rank the site
+
+55
+Accessibility & UX
+
+How usable and accessible the site is for visitors
+
+80
+Answer Engine Optimization
+
+Whether AI answer engines can find and cite the site
+
+74
+Your full report is ready — where should we send it?
+
+Leave your details and the action plan, detailed findings, and page table will unlock immediately. We will also email you a copy.
+
+Full name
+Email
+Phone (optional)
+Send me practical tips on website speed, SEO and AI visibility. I can unsubscribe at any time.
+
+Optional — your report is sent either way.
+
+Unlock my full report
+Action plan, in priority order
+1
+LCP is very slow — main content appears late
+
+Optimize the hero image (WebP + preload), remove render-blocking scripts, and speed up server response time.
+
+Critical
+Performance
+Effort: in-depth
+1 page affected
+2
+Missing H1 heading
+
+Add exactly one H1 heading per page that accurately describes the content.
+
+Critical
+SEO
+Effort: moderate
+2 pages affected
+3
+Images missing alt text
+
+Write short, descriptive alt text for every meaningful image, and leave alt="" only for purely decorative images.
+
+Warning
+SEO
+Effort: quick win
+12 pages affected
+4
+No structured data on the site
+
+Add baseline JSON-LD: Organization or LocalBusiness on the homepage, and Product/Service/Article on content pages.
+
+Warning
+SEO
+Effort: in-depth
+12 pages affected
+5
+Title tags too short
+
+Expand titles to 30-60 characters covering the offer, audience and location where relevant.
+
+Warning
+SEO
+Effort: quick win
+12 pages affected
+6
+Pinch-to-zoom disabled on mobile
+
+Remove user-scalable=no and maximum-scale from the viewport tag.
+
+Warning
+Accessibility & UX
+Effort: moderate
+12 pages affected
+7
+Thin content pages
+
+Expand these pages with substantive content that answers the questions your customers actually ask.
+
+Warning
+SEO
+Effort: in-depth
+7 pages affected
+8
+Scripts and stylesheets delay first paint
+
+Apply Lighthouse's recommendation for this item.
+
+Warning
+Performance
+Effort: in-depth
+1 page affected
+9
+Server takes too long to respond
+
+Apply Lighthouse's recommendation for this item.
+
+Warning
+Performance
+Effort: in-depth
+1 page affected
+10
+Server takes too long to respond
+
+Apply Lighthouse's recommendation for this item.
+
+Warning
+Performance
+Effort: in-depth
+1 page affected
+11
+Missing meta description
+
+Write a 70-160 character description for every page with a clear value proposition and a call to action.
+
+Warning
+SEO
+Effort: quick win
+4 pages affected
+12
+Form fields without labels
+
+Attach a <label for> to every field, or at minimum a clear aria-label.
+
+Warning
+Accessibility & UX
+Effort: quick win
+12 pages affected
+Performance and Core Web Vitals
+Lighthouse category	Mobile	Desktop
+Performance	58	76
+Accessibility	92	88
+Best Practices	96	100
+SEO	92	92
+
+Largest Contentful Paint
+
+5.9 שנ'
+
+Poor
+
+Cumulative Layout Shift
+
+0.006
+
+Good
+
+First Contentful Paint
+
+3.5 שנ'
+
+Poor
+
+Total Blocking Time
+
+330 אלפיות שנייה
+
+Needs improvement
+
+Speed Index
+
+7.4 שנ'
+
+Poor
+Real-user data (Chrome UX Report)
+
+Google does not have enough real-user traffic for this site to show field data. The scores above are based on lab measurement only.
+
+Mobile screenshot
+Improvement opportunity	Time savings	Size savings
+בקשות חוסמות עיבוד	3650 ms	—
+זמן האחזור של בקשת מסמך	1000 ms	—
+יש לקצר את זמן התגובה הראשונית של השרת	1000 ms	—
+צריך לצמצם את העבודה על התהליכון הראשי	350 ms	—
+שיפור של שליחת התמונות	150 ms	—
+תצוגת גופן	50 ms	—
+הפחתת תוכן JavaScript שאינו בשימוש	—	122 KB
+All findings
+SEO
+(10 findings)
+1 critical
+5 warnings
+Critical
+Missing H1 heading
+
+2 pages have no <h1> element. The H1 declares the page topic to both search engines and screen readers; without it the page looks topic-less.
+
+What to do
+
+Add exactly one H1 heading per page that accurately describes the content.
+
+Evidence: https://nama-c.com/, https://nama-c.com/shop/
+
+Show 2 affected pages
+Warning
+Images missing alt text
+
+146 of 344 images have no alt attribute. Alt text is the only way Google and screen-reader users can understand image content; without it you lose image-search traffic and risk accessibility complaints.
+
+What to do
+
+Write short, descriptive alt text for every meaningful image, and leave alt="" only for purely decorative images.
+
+Evidence: https://nama-c.com/ (55), https://nama-c.com/faq/ (5), https://nama-c.com/blog/ (5), https://nama-c.com/shop/ (28), https://nama-c.com/sign-up/ (1), https://nama-c.com/about-us/ (6), https://nama-c.com/delivery/ (9), https://nama-c.com/solutions/ (16), https://nama-c.com/contact-us/ (5), https://nama-c.com/wishlist-2/ (5), https://nama-c.com/coming-soon/ (6), https://nama-c.com/order-tracking/ (5)
+
+Show 12 affected pages
+Warning
+No structured data on the site
+
+No JSON-LD structured data was found on any crawled page. Structured data tells Google who you are and what you offer, and enables rich results such as ratings, prices and opening hours.
+
+What to do
+
+Add baseline JSON-LD: Organization or LocalBusiness on the homepage, and Product/Service/Article on content pages.
+
+Show 12 affected pages
+Warning
+Title tags too short
+
+12 pages have a title shorter than 30 characters, wasting valuable search-result space and giving Google too little context about the page topic.
+
+What to do
+
+Expand titles to 30-60 characters covering the offer, audience and location where relevant.
+
+Evidence: Nama - NAMA | FAQs - NAMA | Blog - NAMA
+
+Show 12 affected pages
+Warning
+Missing meta description
+
+4 pages have no meta description. Without one, Google pulls a random snippet of text, reducing your click-through rate.
+
+What to do
+
+Write a 70-160 character description for every page with a clear value proposition and a call to action.
+
+Evidence: https://nama-c.com/blog/, https://nama-c.com/shop/, https://nama-c.com/sign-up/, https://nama-c.com/order-tracking/
+
+Show 4 affected pages
+Warning
+Thin content pages
+
+7 pages have fewer than 300 words, giving Google too little material to rank them and visitors too few reasons to stay.
+
+What to do
+
+Expand these pages with substantive content that answers the questions your customers actually ask.
+
+Evidence: https://nama-c.com/blog/ (184 words), https://nama-c.com/sign-up/ (18 words), https://nama-c.com/about-us/ (286 words)
+
+Show 7 affected pages
+Notice
+No Sitemap directive in robots.txt
+
+A Sitemap directive points crawlers directly to your list of pages and speeds up discovery of new content.
+
+What to do
+
+Add a line: Sitemap: https://nama-c.com/sitemap.xml
+
+Show 1 affected pages
+Notice
+Heading levels are skipped
+
+10 pages jump from one heading level to a much lower one (e.g. H2 straight to H4), breaking the content hierarchy for screen readers and search engines.
+
+What to do
+
+Order headings in a continuous ascending sequence: H1, then H2, then H3.
+
+Evidence: https://nama-c.com/faq/, https://nama-c.com/blog/, https://nama-c.com/shop/, https://nama-c.com/about-us/, https://nama-c.com/delivery/, https://nama-c.com/solutions/, https://nama-c.com/contact-us/, https://nama-c.com/wishlist-2/, https://nama-c.com/coming-soon/, https://nama-c.com/order-tracking/
+
+Show 10 affected pages
+Notice
+Images missing width/height
+
+66 images have no defined dimensions, causing content to shift during load, which hurts visual stability and Core Web Vitals.
+
+What to do
+
+Add explicit width and height attributes to every <img> tag.
+
+Evidence: 66
+
+Show 11 affected pages
+Notice
+Missing Open Graph tags
+
+6 pages lack Open Graph tags. Without them, links shared on social platforms display as bare text with no image, reducing click-through.
+
+What to do
+
+Add og:title, og:description and og:image (1200x630) to every page.
+
+Evidence: https://nama-c.com/faq/, https://nama-c.com/blog/, https://nama-c.com/shop/, https://nama-c.com/contact-us/, https://nama-c.com/wishlist-2/, https://nama-c.com/order-tracking/
+
+Show 6 affected pages
+Performance
+(9 findings)
+1 critical
+5 warnings
+Accessibility & UX
+(8 findings)
+4 warnings
+Answer Engine Optimization
+(7 findings)
+3 warnings
+Page-by-page breakdown
+Page	Status	TTFB	Title length	Description length	H1	Words	Missing alt	Structured data
+https://nama-c.com/	200	1107ms	11	96	0	895	55	—
+https://nama-c.com/faq/	200	219ms	11	103	1	981	5	—
+https://nama-c.com/blog/	200	219ms	11	0	1	184	5	—
+https://nama-c.com/shop/	200	136ms	11	0	0	960	28	—
+https://nama-c.com/sign-up/	200	219ms	14	0	0	18	1	—
+https://nama-c.com/about-us/	200	115ms	15	141	1	286	6	—
+https://nama-c.com/delivery/	200	95ms	24	121	1	746	9	—
+https://nama-c.com/solutions/	200	101ms	16	118	1	494	16	—
+https://nama-c.com/contact-us/	200	105ms	17	134	1	240	5	—
+https://nama-c.com/wishlist-2/	200	1974ms	15	131	1	212	5	—
+https://nama-c.com/coming-soon/	200	125ms	18	95	1	211	6	—
+https://nama-c.com/order-tracking/	200	126ms	21	0	1	226	5	—
+Legend
+Critical
+
+An issue that directly harms rankings, accessibility, or the ability of visitors to use the site. Fix these first.
+
+Warning
+
+A significant issue that reduces performance or opportunities. Worth fixing soon.
+
+Notice
+
+A recommended improvement that adds extra value once critical issues are resolved.
+
+Passed
+
+Checked and found to be in good order.
+
+Overall score weighting: Performance 30%, SEO 30%, Accessibility & UX 20%, Answer Engine Optimization 20%. Each category score reflects the severity of the issues found in it, and the Performance and Accessibility & UX categories also incorporate Google's Lighthouse score.
+
+Progress over time
+
+2 findings · +2 since the first audit
+
+8/30/2026
+8/30/2026
+ltr
+
+This report was produced by an automated audit engine. Here is the person who can help you act on it.
+
+Mohamed Abd Elgani
+
+Mohamed Abd Elgani leads Dr. Digital, a digital agency with over 11 years of experience in digital marketing and building technical solutions. The agency has professionally developed more than 60 websites and e-commerce stores, has worked with over 30 clients on successful projects, and builds smart chatbots, marketing automation, and native Android and iOS apps. Reach out directly to turn this audit into a prioritised action plan.
+
+Visit dr-digital1.com
+Message on WhatsApp
+Email
+Premium
+Get the full fix plan
+
+The report tells you what is wrong. The fix plan tells you exactly how to fix it on your own website — step by step, with the finished text and files ready to paste in.
+
+Every finding rewritten as instructions for WooCommerce (WordPress)
+Ready-made titles, descriptions and image text for your pages
+Downloadable files: robots.txt, llms.txt, schema, server settings
+Effort estimate and who can do each task
+
+We detected WooCommerce (WordPress) on your site, so the instructions will be written for it.
+
+What you get
+The written plan: every finding turned into steps for your platform
+The generated files, ready to upload
+A brief you can hand to a developer
+What is not included
+We do not carry out the changes for you
+No ongoing support or unlimited questions
+No guarantee of rankings, traffic or revenue
+
+Not happy within 14 days? Full refund, no questions asked. A tax invoice is issued automatically to the email you provide. Terms of service
+
+Get the full fix plan
+₪99 incl. VAT, one-off
+The fee is credited in full against any implementation work we carry out for you.
+How do you compare to competitors?
+
+Run a comparison against a competitor's site and see exactly where they are ahead and where you are ahead.
+
+Compare against a competitor
+Want us to handle this for you?
+
+Our team implements this exact action plan: technical fixes, performance improvements, content work, and answer-engine visibility. We would be glad to walk through the report with you on a short call.
+
+Book a strategy call
+
+We will walk through this report's findings together and agree on a prioritised plan to fix what matters most.
+
+Full name
+Email
+Phone
+Website
+Preferred contact method
+WhatsApp
+Phone
+Email
+What woul

@@ -1,0 +1,283 @@
+# Raw live measurements — nama-c.com — 2026-08-30
+# Method: external, via Cloudflare, Chrome UA, paced to avoid the LiteSpeed 403 throttle.
+
+## Page timings (path, http, server_ms = TTFB-TLS, total_ms, bytes)
+/	200	265	485	46438
+/shop/	200	266	618	46319
+/product/wearable-breast-pump/	200	459	583	43996
+/cart/	200	2560	3338	58553
+/my-account/	200	2477	2998	38441
+/blog/	200	253	368	35644
+/contact-us/	200	470	560	37232
+/	200	273	607	46357
+/shop/	200	287	468	46318
+/product/wearable-breast-pump/	200	277	437	44041
+/cart/	200	2691	3241	58499
+/my-account/	200	2538	3162	38506
+/blog/	200	289	414	35644
+/contact-us/	200	280	451	37231
+/	200	470	565	46399
+/shop/	200	291	447	46319
+/product/wearable-breast-pump/	200	277	446	44041
+/cart/	200	2740	3280	58493
+/my-account/	200	2546	3034	38541
+/blog/	200	281	594	35644
+/contact-us/	200	303	413	37231
+
+## Session with real cart (product 6338, no order placed)
+### 1. warm homepage (get session cookies)
+home 200 ttfb=0.525685
+### 2. add product 6338 to cart
+add 200 ttfb=3.047012 final=https://nama-c.com/shop/?add-to-cart=6338&quantity=1
+### 3. cart page WITH items
+cart 200 tls=0.109610 ttfb=3.246944 total=4.199266 size=67999
+### 4. CHECKOUT with items (run 1)
+checkout 200 tls=0.116230 ttfb=3.602106 total=3.702091 size=66478
+### 5. CHECKOUT run 2
+checkout2 200 tls=0.090084 ttfb=3.563237 total=3.577629 size=66626
+### 6. CHECKOUT run 3
+checkout3 200 tls=0.320735 ttfb=4.053451 total=4.069825 size=66626
+### cookies:
+ woocommerce_cart_hash woocommerce_items_in_cart yay_currency_widget _fbp 
+SESSION_DONE
+
+## WooCommerce AJAX endpoints
+=== get_refreshed_fragments (fires on EVERY page load) ===
+run1 http=200 tls=0.284549 ttfb=2.602402 total=2.602611 size=1431
+run2 http=200 tls=0.087649 ttfb=2.872658 total=2.872943 size=1430
+run3 http=200 tls=0.092722 ttfb=2.282945 total=2.283375 size=1430
+run4 http=200 tls=0.089820 ttfb=2.343161 total=2.343627 size=1431
+run5 http=200 tls=0.118814 ttfb=2.427230 total=2.427437 size=1431
+=== update_order_review (fires on every checkout field change) ===
+run1 http=200 tls=0.220653 ttfb=2.166208 total=2.237367 size=2419
+run2 http=200 tls=0.090075 ttfb=2.285304 total=2.362958 size=2422
+run3 http=200 tls=0.085803 ttfb=2.251199 total=2.268875 size=2421
+AJAX_DONE
+
+## Checkout asset inventory (http, bytes, secs, url)
+## NOTE: the 403 rows are cold-cache MISSes hitting origin under the throttle;
+##       on repeat these same URLs return cf-cache-status: HIT.
+200	1186	0.755654	https://nama-c.com/wp-content/plugins/affiliate-wp/assets/js/tracking.min.js?ver=2.36.0
+200	4677	0.631096	https://nama-c.com/wp-content/plugins/click-to-chat-for-whatsapp/new/inc/assets/js/app.js?ver=4.43
+200	2097	0.448493	https://nama-c.com/wp-content/plugins/dr-access/assets/js/icons.js?ver=1.2.3
+200	6873	0.424499	https://nama-c.com/wp-content/plugins/dr-access/assets/js/widget.js?ver=1.2.3
+200	10079	0.392728	https://nama-c.com/wp-content/plugins/elementor-pro/assets/js/elements-handlers.min.js?ver=4.2.1
+200	6193	0.506765	https://nama-c.com/wp-content/plugins/elementor-pro/assets/js/frontend.min.js?ver=4.2.1
+200	2610	0.438976	https://nama-c.com/wp-content/plugins/elementor-pro/assets/js/webpack-pro.runtime.min.js?ver=4.2.1
+200	15445	0.485123	https://nama-c.com/wp-content/plugins/elementor/assets/js/frontend-modules.min.js?ver=4.2.3
+200	10124	0.440072	https://nama-c.com/wp-content/plugins/elementor/assets/js/frontend.min.js?ver=4.2.3
+200	2335	0.424894	https://nama-c.com/wp-content/plugins/elementor/assets/js/webpack.runtime.min.js?ver=4.2.3
+200	1278	0.441849	https://nama-c.com/wp-content/plugins/facebook-for-woocommerce/assets/js/facebook-for-woocommerce-signals.js?ver=3.7.6
+200	2641	0.419825	https://nama-c.com/wp-content/plugins/facebook-for-woocommerce/assets/js/frontend/pixel-events.js?ver=3.7.6
+200	23	0.439455	https://nama-c.com/wp-content/plugins/google-site-kit/dist/assets/js/googlesitekit-events-provider-content-events-33078016c5e1e9f07c35.js
+200	2189	0.163804	https://nama-c.com/wp-content/plugins/google-site-kit/dist/assets/js/googlesitekit-events-provider-mailchimp-ca65780bfd133f3af82c.js
+200	964	0.462661	https://nama-c.com/wp-content/plugins/google-site-kit/dist/assets/js/googlesitekit-events-provider-woocommerce-454120fdf8df4537b59f.js
+200	2431	0.465058	https://nama-c.com/wp-content/plugins/mailchimp-for-wp/assets/js/forms.js?ver=4.14.0
+200	139	0.401965	https://nama-c.com/wp-content/plugins/sitepress-multilingual-cms/res/js/cookies/language-cookie.js?ver=495000
+200	994	0.418310	https://nama-c.com/wp-content/plugins/slicewp-add-on-cross-site-tracking/assets/js/script-front-end.js?ver=1.0.0
+200	1082	0.459929	https://nama-c.com/wp-content/plugins/slicewp/assets/js/script-trk.js?ver=1.2.11
+200	480	0.439975	https://nama-c.com/wp-content/plugins/woocommerce-multilingual/res/js/cart_widget.min.js?ver=5.5.7
+200	994	0.444648	https://nama-c.com/wp-content/plugins/woocommerce-multilingual/res/js/wcml-multi-currency.min.js?ver=5.5.7
+200	519	0.455695	https://nama-c.com/wp-content/plugins/woocommerce/assets/js/frontend/add-payment-method.min.js?ver=11.0.1
+200	1296	0.450994	https://nama-c.com/wp-content/plugins/woocommerce/assets/js/frontend/add-to-cart.min.js?ver=11.0.1
+200	871	0.447326	https://nama-c.com/wp-content/plugins/woocommerce/assets/js/frontend/address-i18n.min.js?ver=11.0.1
+200	943	0.467772	https://nama-c.com/wp-content/plugins/woocommerce/assets/js/frontend/cart-fragments.min.js?ver=11.0.1
+200	5035	0.140580	https://nama-c.com/wp-content/plugins/woocommerce/assets/js/frontend/checkout.min.js?ver=11.0.1
+200	989	0.419967	https://nama-c.com/wp-content/plugins/woocommerce/assets/js/frontend/country-select.min.js?ver=11.0.1
+200	1020	0.416481	https://nama-c.com/wp-content/plugins/woocommerce/assets/js/frontend/order-attribution.min.js?ver=11.0.1
+200	600	0.403039	https://nama-c.com/wp-content/plugins/woocommerce/assets/js/frontend/tokenization-form.min.js?ver=11.0.1
+200	786	0.445014	https://nama-c.com/wp-content/plugins/woocommerce/assets/js/frontend/utils/custom-place-order-button.min.js?ver=11.0.1
+200	1384	0.769654	https://nama-c.com/wp-content/plugins/woocommerce/assets/js/frontend/woocommerce.min.js?ver=11.0.1
+200	3277	0.224947	https://nama-c.com/wp-content/plugins/woocommerce/assets/js/jquery-blockui/jquery.blockUI.min.js?ver=2.7.0-wc.11.0.1
+200	695	0.475829	https://nama-c.com/wp-content/plugins/woocommerce/assets/js/jquery-cookie/jquery.cookie.min.js?ver=1.4.1-wc.11.0.1
+200	760	0.444157	https://nama-c.com/wp-content/plugins/woocommerce/assets/js/js-cookie/js.cookie.min.js?ver=2.1.4-wc.11.0.1
+200	20246	0.500751	https://nama-c.com/wp-content/plugins/woocommerce/assets/js/selectWoo/selectWoo.full.min.js?ver=1.0.9-wc.11.0.1
+200	4609	0.433194	https://nama-c.com/wp-content/plugins/woocommerce/assets/js/sourcebuster/sourcebuster.min.js?ver=11.0.1
+200	557	0.416395	https://nama-c.com/wp-content/plugins/yaycurrency/src/compatibles/third-party.min.js?ver=3.3.5
+200	206	0.413227	https://nama-c.com/wp-content/plugins/yaycurrency/src/compatibles/woocommerce-blocks.min.js?ver=3.3.5
+200	1723	0.432292	https://nama-c.com/wp-content/plugins/yaycurrency/src/helpers/blocks.helper.min.js?ver=3.3.5
+200	4124	0.525351	https://nama-c.com/wp-content/plugins/yaycurrency/src/helpers/general.helper.min.js?ver=3.3.5
+200	399	0.461781	https://nama-c.com/wp-content/plugins/yaycurrency/src/script.min.js?ver=3.3.5
+200	4384	0.153337	https://nama-c.com/wp-content/themes/woodmart/js/libs/autocomplete.min.js?ver=8.4.1
+200	920	0.441316	https://nama-c.com/wp-content/themes/woodmart/js/libs/sticky-kit.min.js?ver=8.4.1
+200	1671	0.424900	https://nama-c.com/wp-content/themes/woodmart/js/scripts/global/ajaxSearch.min.js?ver=8.4.1
+200	702	0.431324	https://nama-c.com/wp-content/themes/woodmart/js/scripts/global/beforeSearchContent.min.js?ver=8.4.1
+200	483	0.451522	https://nama-c.com/wp-content/themes/woodmart/js/scripts/global/clearSearch.min.js?ver=8.4.1
+200	257	0.397573	https://nama-c.com/wp-content/themes/woodmart/js/scripts/global/cookiesPopup.min.js?ver=8.4.1
+200	541	0.424619	https://nama-c.com/wp-content/themes/woodmart/js/scripts/global/elementor-integration.min.js?ver=8.4.1
+200	1337	0.425227	https://nama-c.com/wp-content/themes/woodmart/js/scripts/global/helpers.min.js?ver=8.4.1
+200	245	0.406043	https://nama-c.com/wp-content/themes/woodmart/js/scripts/global/scrollBar.min.js?ver=8.4.1
+200	171	0.430595	https://nama-c.com/wp-content/themes/woodmart/js/scripts/global/scrollTop.min.js?ver=8.4.1
+200	742	0.452477	https://nama-c.com/wp-content/themes/woodmart/js/scripts/global/stickyColumn.min.js?ver=8.4.1
+200	129	0.393061	https://nama-c.com/wp-content/themes/woodmart/js/scripts/global/stickySocialButtons.min.js?ver=8.4.1
+200	355	0.287707	https://nama-c.com/wp-content/themes/woodmart/js/scripts/global/widgetCollapse.min.js?ver=8.4.1
+200	952	0.512312	https://nama-c.com/wp-content/themes/woodmart/js/scripts/header/headerBuilder.min.js?ver=8.4.1
+200	930	0.430373	https://nama-c.com/wp-content/themes/woodmart/js/scripts/menu/menuOffsets.min.js?ver=8.4.1
+200	623	0.276591	https://nama-c.com/wp-content/themes/woodmart/js/scripts/menu/menuSetUp.min.js?ver=8.4.1
+200	1551	0.483753	https://nama-c.com/wp-content/themes/woodmart/js/scripts/menu/mobileNavigation.min.js?ver=8.4.1
+200	447	0.403355	https://nama-c.com/wp-content/themes/woodmart/js/scripts/wc/abandonedCart.min.js?ver=8.4.1
+200	372	0.158971	https://nama-c.com/wp-content/themes/woodmart/js/scripts/wc/cartWidget.min.js?ver=8.4.1
+200	370	0.170855	https://nama-c.com/wp-content/themes/woodmart/js/scripts/wc/checkoutFields.min.js?ver=8.4.1
+200	489	0.416950	https://nama-c.com/wp-content/themes/woodmart/js/scripts/wc/checkoutQuantity.min.js?ver=8.4.1
+200	173	0.431187	https://nama-c.com/wp-content/themes/woodmart/js/scripts/wc/checkoutRemoveBtn.min.js?ver=8.4.1
+200	366	0.427779	https://nama-c.com/wp-content/themes/woodmart/js/scripts/wc/loginSidebar.min.js?ver=8.4.1
+200	570	0.425468	https://nama-c.com/wp-content/themes/woodmart/js/scripts/wc/miniCartQuantity.min.js?ver=8.4.1
+200	179	0.614801	https://nama-c.com/wp-content/themes/woodmart/js/scripts/wc/onRemoveFromCart.min.js?ver=8.4.1
+200	539	0.964255	https://nama-c.com/wp-content/themes/woodmart/js/scripts/wc/updateCartFragmentsFix.js?ver=8.4.1
+200	2063	0.412322	https://nama-c.com/wp-content/themes/woodmart/js/scripts/wc/wishlist.min.js?ver=8.4.1
+200	232	0.431198	https://nama-c.com/wp-content/themes/woodmart/js/scripts/wc/woocommerceNotices.min.js?ver=8.4.1
+200	446	0.156989	https://nama-c.com/wp-content/themes/woodmart/js/scripts/wc/woocommerceQuantity.min.js?ver=8.4.1
+200	144	0.404807	https://nama-c.com/wp-content/themes/woodmart/js/scripts/wc/woocommerceWrappTable.min.js?ver=8.4.1
+200	1759	0.425781	https://nama-c.com/wp-includes/js/dist/hooks.min.js?ver=f0f188028580e8dc1255
+200	2379	0.428081	https://nama-c.com/wp-includes/js/dist/i18n.min.js?ver=1dfe7db3940c23ea9216
+200	4678	0.405544	https://nama-c.com/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1
+200	29744	0.543797	https://nama-c.com/wp-includes/js/jquery/jquery.min.js?ver=3.7.1
+200	6276	0.440453	https://nama-c.com/wp-includes/js/jquery/ui/core.min.js?ver=1.14.2
+302	98	0.136551	https://unpkg.com/meta-capi-param-builder-clientjs/dist/clientParamBuilder.bundle.js?ver=3.7.6
+200	173399	0.232752	https://www.googletagmanager.com/gtag/js?id=GT-WKR2DS25
+200	825	0.199146	https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;700&#038;display=swap
+200	934	0.169321	https://fonts.googleapis.com/css?family=Roboto+Slab:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic&#038;display=swap
+200	2834	0.209015	https://fonts.googleapis.com/css?family=Roboto:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic&#038;display=swap
+200	545	0.598648	https://nama-c.com/wp-content/plugins/WCGatewayTranzila/css/checkout.css?ver=0.0.24.6
+200	4413	0.548247	https://nama-c.com/wp-content/plugins/affiliate-wp/assets/css/forms.min.css?ver=2.36.0
+200	935	0.466492	https://nama-c.com/wp-content/plugins/click-to-chat-for-whatsapp/new/inc/assets/css/main.css?ver=4.43
+403	751	0.447213	https://nama-c.com/wp-content/plugins/dr-access/assets/css/widget.css?ver=1.2.3
+200	231	0.439387	https://nama-c.com/wp-content/plugins/sitepress-multilingual-cms/templates/language-switchers/legacy-list-horizontal/style.min.css?ver=1
+403	751	0.456702	https://nama-c.com/wp-content/plugins/sitepress-multilingual-cms/templates/language-switchers/menu-item/style.min.css?ver=1
+200	5599	0.528297	https://nama-c.com/wp-content/plugins/slicewp/assets/css/style-front-end.css?ver=1.2.11
+200	2393	0.428897	https://nama-c.com/wp-content/plugins/woocommerce/assets/client/blocks/wc-blocks.css?ver=wc-11.0.1
+200	1750	0.472314	https://nama-c.com/wp-content/plugins/woocommerce/assets/css/select2.css?ver=11.0.1
+200	2026	0.514952	https://nama-c.com/wp-content/plugins/yaycurrency/src/styles.css?ver=3.3.5
+403	751	0.408031	https://nama-c.com/wp-content/themes/woodmart-child/style.css?ver=8.4.1
+403	751	0.460440	https://nama-c.com/wp-content/themes/woodmart/css/parts/base.min.css?ver=8.4.1
+200	213	0.468720	https://nama-c.com/wp-content/themes/woodmart/css/parts/el-menu-wpb-elem.min.css?ver=8.4.1
+200	82	0.477135	https://nama-c.com/wp-content/themes/woodmart/css/parts/el-menu.min.css?ver=8.4.1
+200	508	0.465239	https://nama-c.com/wp-content/themes/woodmart/css/parts/el-section-title.min.css?ver=8.4.1
+200	941	0.502678	https://nama-c.com/wp-content/themes/woodmart/css/parts/el-social-icons.min.css?ver=8.4.1
+403	751	0.498874	https://nama-c.com/wp-content/themes/woodmart/css/parts/el-social-styles.min.css?ver=8.4.1
+403	751	0.468325	https://nama-c.com/wp-content/themes/woodmart/css/parts/el-text-block.min.css?ver=8.4.1
+403	751	0.464067	https://nama-c.com/wp-content/themes/woodmart/css/parts/footer-base.min.css?ver=8.4.1
+200	2840	0.143919	https://nama-c.com/wp-content/themes/woodmart/css/parts/header-base.min.css?ver=8.4.1
+200	356	0.501557	https://nama-c.com/wp-content/themes/woodmart/css/parts/header-el-base.min.css?ver=8.4.1
+403	751	0.455988	https://nama-c.com/wp-content/themes/woodmart/css/parts/header-el-cart-side.min.css?ver=8.4.1
+200	515	0.432279	https://nama-c.com/wp-content/themes/woodmart/css/parts/header-el-cart.min.css?ver=8.4.1
+200	307	0.495639	https://nama-c.com/wp-content/themes/woodmart/css/parts/header-el-mobile-nav-drilldown-slide.min.css?ver=8.4.1
+200	320	0.901191	https://nama-c.com/wp-content/themes/woodmart/css/parts/header-el-mobile-nav-drilldown.min.css?ver=8.4.1
+200	314	0.507794	https://nama-c.com/wp-content/themes/woodmart/css/parts/header-el-my-account-sidebar.min.css?ver=8.4.1
+200	134	0.158531	https://nama-c.com/wp-content/themes/woodmart/css/parts/header-el-my-account.min.css?ver=8.4.1
+200	427	0.479160	https://nama-c.com/wp-content/themes/woodmart/css/parts/header-el-search.min.css?ver=8.4.1
+200	293	0.468487	https://nama-c.com/wp-content/themes/woodmart/css/parts/helpers-wpb-elem.min.css?ver=8.4.1
+403	751	0.783629	https://nama-c.com/wp-content/themes/woodmart/css/parts/int-elem-base.min.css?ver=8.4.1
+403	751	0.473563	https://nama-c.com/wp-content/themes/woodmart/css/parts/int-elem-opt-sticky-column.min.css?ver=8.4.1
+200	1439	0.830844	https://nama-c.com/wp-content/themes/woodmart/css/parts/int-elementor-pro.min.css?ver=8.4.1
+200	221	0.475554	https://nama-c.com/wp-content/themes/woodmart/css/parts/int-seo-plugins.min.css?ver=8.4.1
+200	1137	0.467582	https://nama-c.com/wp-content/themes/woodmart/css/parts/int-wpml-curr-switch.min.css?ver=8.4.1
+403	751	0.745243	https://nama-c.com/wp-content/themes/woodmart/css/parts/int-wpml.min.css?ver=8.4.1
+200	230	0.517280	https://nama-c.com/wp-content/themes/woodmart/css/parts/mod-nav-vertical-design-default.min.css?ver=8.4.1
+200	443	0.734557	https://nama-c.com/wp-content/themes/woodmart/css/parts/mod-nav-vertical.min.css?ver=8.4.1
+403	751	0.511019	https://nama-c.com/wp-content/themes/woodmart/css/parts/mod-star-rating.min.css?ver=8.4.1
+200	901	0.960714	https://nama-c.com/wp-content/themes/woodmart/css/parts/mod-tools.min.css?ver=8.4.1
+200	670	0.483661	https://nama-c.com/wp-content/themes/woodmart/css/parts/opt-bottom-toolbar.min.css?ver=8.4.1
+200	419	0.714481	https://nama-c.com/wp-content/themes/woodmart/css/parts/opt-cookies.min.css?ver=8.4.1
+403	751	0.799242	https://nama-c.com/wp-content/themes/woodmart/css/parts/opt-popular-requests.min.css?ver=8.4.1
+403	751	0.445008	https://nama-c.com/wp-content/themes/woodmart/css/parts/opt-scrolltotop.min.css?ver=8.4.1
+200	399	0.275801	https://nama-c.com/wp-content/themes/woodmart/css/parts/opt-sticky-social.min.css?ver=8.4.1
+200	393	0.679101	https://nama-c.com/wp-content/themes/woodmart/css/parts/opt-widget-collapse.min.css?ver=8.4.1
+200	582	0.454294	https://nama-c.com/wp-content/themes/woodmart/css/parts/wd-search-dropdown.min.css?ver=8.4.1
+200	650	0.819494	https://nama-c.com/wp-content/themes/woodmart/css/parts/wd-search-form.min.css?ver=8.4.1
+403	751	0.451467	https://nama-c.com/wp-content/themes/woodmart/css/parts/wd-search-results.min.css?ver=8.4.1
+403	751	0.270807	https://nama-c.com/wp-content/themes/woodmart/css/parts/woo-lib-select2.min.css?ver=8.4.1
+403	751	0.455831	https://nama-c.com/wp-content/themes/woodmart/css/parts/woo-mod-block-notices.min.css?ver=8.4.1
+403	751	0.720327	https://nama-c.com/wp-content/themes/woodmart/css/parts/woo-mod-cart-labels.min.css?ver=8.4.1
+200	377	0.588432	https://nama-c.com/wp-content/themes/woodmart/css/parts/woo-mod-checkout-steps.min.css?ver=8.4.1
+403	751	0.440004	https://nama-c.com/wp-content/themes/woodmart/css/parts/woo-mod-grid.min.css?ver=8.4.1
+200	513	0.540988	https://nama-c.com/wp-content/themes/woodmart/css/parts/woo-mod-login-form.min.css?ver=8.4.1
+200	303	0.470640	https://nama-c.com/wp-content/themes/woodmart/css/parts/woo-mod-progress-bar.min.css?ver=8.4.1
+200	425	0.442521	https://nama-c.com/wp-content/themes/woodmart/css/parts/woo-mod-quantity.min.css?ver=8.4.1
+200	1197	0.464401	https://nama-c.com/wp-content/themes/woodmart/css/parts/woo-mod-shop-table.min.css?ver=8.4.1
+403	751	0.466632	https://nama-c.com/wp-content/themes/woodmart/css/parts/woo-opt-fbt-cart.min.css?ver=8.4.1
+200	272	0.479595	https://nama-c.com/wp-content/themes/woodmart/css/parts/woo-opt-free-progress-bar.min.css?ver=8.4.1
+200	494	0.467715	https://nama-c.com/wp-content/themes/woodmart/css/parts/woo-opt-manage-checkout-prod.min.css?ver=8.4.1
+403	751	0.461715	https://nama-c.com/wp-content/themes/woodmart/css/parts/woo-page-checkout-builder.min.css?ver=8.4.1
+200	645	0.478260	https://nama-c.com/wp-content/themes/woodmart/css/parts/woo-page-checkout-el-payment-methods.min.css?ver=8.4.1
+200	1133	0.472130	https://nama-c.com/wp-content/themes/woodmart/css/parts/woo-page-checkout.min.css?ver=8.4.1
+403	751	0.463157	https://nama-c.com/wp-content/themes/woodmart/css/parts/woo-widget-product-list.min.css?ver=8.4.1
+200	1129	0.456368	https://nama-c.com/wp-content/themes/woodmart/css/parts/woo-widget-shopping-cart.min.css?ver=8.4.1
+403	751	0.477743	https://nama-c.com/wp-content/themes/woodmart/css/parts/woocommerce-base.min.css?ver=8.4.1
+200	939	0.458178	https://nama-c.com/wp-content/themes/woodmart/css/parts/wp-blocks.min.css?ver=8.4.1
+200	551	0.444314	https://nama-c.com/wp-content/uploads/2026/06/xts-header_875428-1781993303.css?ver=8.4.1
+200	1645	0.697818	https://nama-c.com/wp-content/uploads/2026/07/xts-theme_settings_default-1784968123.css?ver=8.4.1
+200	6592	0.505411	https://nama-c.com/wp-content/uploads/elementor/css/custom-frontend.min.css?ver=1788070858
+200	531	0.453795	https://nama-c.com/wp-content/uploads/elementor/css/post-579.css?ver=1788070860
+200	437	0.512612	https://nama-c.com/wp-content/uploads/elementor/css/post-8.css?ver=1788070858
+200	253	0.612755	https://nama-c.com/wp-content/uploads/elementor/css/post-836.css?ver=1788073173
+200	569	0.558825	https://nama-c.com/wp-content/uploads/elementor/css/post-839.css?ver=1788073173
+
+## Product page images
+200	422	0.822753	https://nama-c.com/wp-content/plugins/sitepress-multilingual-cms/res/flags/ar.svg
+200	534	0.320553	https://nama-c.com/wp-content/plugins/sitepress-multilingual-cms/res/flags/en.svg
+200	9198	0.485988	https://nama-c.com/wp-content/themes/woodmart/images/payments.png
+200	343	0.485238	https://nama-c.com/wp-content/uploads/2024/03/chevron-down-black.svg
+200	824	0.468851	https://nama-c.com/wp-content/uploads/2024/03/vg-primary-discount.svg
+200	4536	0.473719	https://nama-c.com/wp-content/uploads/2024/03/w-logo-304x63.webp
+200	70644	0.591986	https://nama-c.com/wp-content/uploads/2025/05/Breast-bumpnama2.jpg
+200	80513	0.660553	https://nama-c.com/wp-content/uploads/2025/05/Breast-bumpnama3.jpg
+200	87812	0.624014	https://nama-c.com/wp-content/uploads/2025/05/Breast-bumpnama4.jpg
+200	22614	0.616580	https://nama-c.com/wp-content/uploads/2025/05/breast-pump-600x600.jpg
+200	56378	0.586794	https://nama-c.com/wp-content/uploads/2025/05/breast-pump.jpg
+200	61322	0.387876	https://nama-c.com/wp-content/uploads/2025/05/namalogo-scaled.png
+200	1754	0.163129	https://nama-c.com/wp-content/uploads/2026/04/gift-150x150.webp
+200	2058	0.488548	https://nama-c.com/wp-content/uploads/2026/04/heart-150x150.webp
+200	3104	0.458864	https://nama-c.com/wp-content/uploads/2026/04/icon-4-150x150.webp
+200	3674	0.458925	https://nama-c.com/wp-content/uploads/2026/04/pumb-150x150.webp
+
+## Homepage images
+200	422	0.397094	https://nama-c.com/wp-content/plugins/sitepress-multilingual-cms/res/flags/ar.svg
+200	534	0.280667	https://nama-c.com/wp-content/plugins/sitepress-multilingual-cms/res/flags/en.svg
+200	9198	0.143244	https://nama-c.com/wp-content/themes/woodmart/images/payments.png
+200	343	0.122860	https://nama-c.com/wp-content/uploads/2024/03/chevron-down-black.svg
+200	1228	0.482771	https://nama-c.com/wp-content/uploads/2024/03/vg-delivery.svg
+200	760	0.133412	https://nama-c.com/wp-content/uploads/2024/03/vg-low-price.svg
+200	801	0.431868	https://nama-c.com/wp-content/uploads/2024/03/vg-payment.svg
+200	824	0.152820	https://nama-c.com/wp-content/uploads/2024/03/vg-primary-discount.svg
+200	37915	0.479876	https://nama-c.com/wp-content/uploads/2024/03/vg-slider-4-opt.jpg
+200	2403	0.451407	https://nama-c.com/wp-content/uploads/2024/03/vg-support.svg
+200	4536	0.131212	https://nama-c.com/wp-content/uploads/2024/03/w-logo-304x63.webp
+200	70644	0.144286	https://nama-c.com/wp-content/uploads/2025/05/Breast-bumpnama2.jpg
+200	1389	0.402429	https://nama-c.com/wp-content/uploads/2025/05/Milkheater-2-65x74.jpg
+200	28321	0.521513	https://nama-c.com/wp-content/uploads/2025/05/Untitled-2-768x768.jpg
+200	1813	0.399485	https://nama-c.com/wp-content/uploads/2025/05/breast-pump-65x74.jpg
+200	31834	0.514965	https://nama-c.com/wp-content/uploads/2025/05/breast-pump-768x768.jpg
+200	1311	0.437592	https://nama-c.com/wp-content/uploads/2025/05/milkbag-3-copy-65x74.jpg
+200	28048	0.491668	https://nama-c.com/wp-content/uploads/2025/05/milkbag-3-copy-768x768.jpg
+200	1174	0.399397	https://nama-c.com/wp-content/uploads/2025/05/namaicecoolingpads-1-65x74.jpg
+200	17397	0.503762	https://nama-c.com/wp-content/uploads/2025/05/namaicecoolingpads-1-768x768.jpg
+200	23185	0.481457	https://nama-c.com/wp-content/uploads/2025/05/namaicecoolingpads2-1-768x768.jpg
+200	61322	0.143950	https://nama-c.com/wp-content/uploads/2025/05/namalogo-scaled.png
+200	1466	0.432466	https://nama-c.com/wp-content/uploads/2025/05/namamassager1-1-65x74.jpg
+200	22079	0.537422	https://nama-c.com/wp-content/uploads/2025/05/namamassager1-1-768x768.jpg
+200	88792	0.558028	https://nama-c.com/wp-content/uploads/2025/05/namamassager2.jpg
+200	1186	0.384319	https://nama-c.com/wp-content/uploads/2025/05/namamilkpad-65x74.jpg
+200	36863	0.470585	https://nama-c.com/wp-content/uploads/2025/05/namamilkpad-768x768.jpg
+200	74831	0.578541	https://nama-c.com/wp-content/uploads/2025/05/namamilkpdf2-768x768.jpg
+200	2010	0.475491	https://nama-c.com/wp-content/uploads/2025/06/Breast-bumpnama-app-65x74.jpg
+200	41460	0.516316	https://nama-c.com/wp-content/uploads/2025/06/Breast-bumpnama-app-768x768.jpg
+200	1883	0.377265	https://nama-c.com/wp-content/uploads/2025/06/Complete-Bundle-3-65x74.jpg
+200	45020	0.597693	https://nama-c.com/wp-content/uploads/2025/06/Complete-Bundle-3-768x768.jpg
+200	1645	0.400794	https://nama-c.com/wp-content/uploads/2025/06/Hospital-Gift-Bundle-65x74.jpg
+200	1870	0.385451	https://nama-c.com/wp-content/uploads/2025/06/Ultra-single-Pump-65x74.jpg
+200	42224	0.581904	https://nama-c.com/wp-content/uploads/2025/06/Ultra-single-Pump-768x768.jpg
+200	1872	0.391149	https://nama-c.com/wp-content/uploads/2025/06/travel-1-65x74.jpg
+200	41764	0.562384	https://nama-c.com/wp-content/uploads/2025/06/travel-1-768x768.jpg
+200	2695	0.398972	https://nama-c.com/wp-content/uploads/2026/02/milkflow-mockup-65x74.png
+200	160858	0.624424	https://nama-c.com/wp-content/uploads/2026/04/WhatsApp-Image-2026-04-19-at-23.07.58.jpeg
+200	213240	0.715620	https://nama-c.com/wp-content/uploads/2026/04/WhatsApp-Image-2026-04-19-at-23.08.08-1.webp
+200	281943	0.732074	https://nama-c.com/wp-content/uploads/2026/04/WhatsApp-Image-2026-04-19-at-23.08.08.jpeg
+200	188219	0.706609	https://nama-c.com/wp-content/uploads/2026/04/WhatsApp-Image-2026-04-19-at-23.27.28.jpeg
+200	25140	0.573606	https://nama-c.com/wp-content/uploads/2026/04/bag.webp
+200	1754	0.220667	https://nama-c.com/wp-content/uploads/2026/04/gift-150x150.webp
+200	35180	0.535964	https://nama-c.com/wp-content/uploads/2026/04/gift.webp
+200	2058	0.118419	https://nama-c.com/wp-content/uploads/2026/04/heart-150x150.webp
+200	3104	0.126997	https://nama-c.com/wp-content/uploads/2026/04/icon-4-150x150.webp
+200	3674	0.121019	https://nama-c.com/wp-content/uploads/2026/04/pumb-150x150.webp
+200	70162	0.612105	https://nama-c.com/wp-content/uploads/2026/04/pumb.webp
